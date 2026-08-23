@@ -116,4 +116,39 @@ public class Slotmachine
         symbols.remove(symbol);
         ok = true;
     }
+
+    /**
+     * Consulta los colores de los simbolos registrados en la maquina, en el orden que fueron
+     * agregados, empezando por la posición 1.
+     * 
+     * @return un arreglo con colores 
+     */
+    public String[] symbols(){
+        ok = true;
+        String[] result = new String[symbols.size()];
+        for (int i = 0; i < symbols.size(); i++){
+            result[i] = symbols.get(i);
+        }
+        return result;
+    }
+
+    /**
+     * Consulta cuantos simbolos distintos tiene la maquina. Como en addSymbol no permitimos colores 
+     * repetidos, este numero siempre sera igual a la cantidad total de simbolos 
+     * 
+     * @return Cantidad de simbolos distintos
+     */
+    public int distinctSymbols(){
+        ok = true;
+        return symbols.size();
+    }
+
+    /**
+     * Termina el simulador, limpia el estado interno de la maquina, dejandola sin ruedas ni simbolos registrados
+     */
+    public void exit(){
+        wheels.clear();
+        symbols.clear();
+        ok = true;
+    }
 }
