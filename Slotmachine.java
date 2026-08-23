@@ -40,6 +40,7 @@ public class Slotmachine
         for(int i = 0; i <wheels.size(); i++){
             wheels.get(i).setPosition(i+1);
         }
+        updateWheelSymbols();
         ok = true;
     }
     
@@ -100,6 +101,7 @@ public class Slotmachine
             pos = symbols.size() + 1;
         }
         symbols.add(pos - 1, color);
+        updateWheelSymbols();
         ok = true;
     }
     
@@ -114,6 +116,7 @@ public class Slotmachine
             return;
         }
         symbols.remove(symbol);
+        updateWheelSymbols();
         ok = true;
     }
 
@@ -150,5 +153,133 @@ public class Slotmachine
         wheels.clear();
         symbols.clear();
         ok = true;
+    }
+       /**
+     * consulta cuantos simbolos distintos tiene la maquina.
+     * como en addsimbol no se permiten los colores repetidos,
+     * este numero siempre sera igual a la cantidad total de simbolos.
+     */
+    public int distinctSymbolos(){
+        ok = true;
+        return symbols.size();
+    }
+    /**
+     * @return un arreglo con colores
+     */
+    public String[] symbols(){
+        ok = true;
+        String[] result = new String[symbols.size()];
+        for (int i = 0; i < symbols.size(); i++){
+            result[i] = symbols.get(i);
+        }
+        return result;
+    }
+    /**
+     * recorre todas las ruedas y le pasa a cada una la lista de simbolos actualizada
+     */
+    private void updateWheelSymbols(){
+        for (int i = 0; i < wheels.size(); i++){
+            wheels.get(i).setSymbols(symbols);
+        }
+    }
+    /**
+     * verifica que haya ruedas y simbolos, luego ajusta la posicion si esta fuera del rango
+     * obtiene las ruedas y llama a los simbolos, si la rueda dice false el simbolo no existe
+     */
+    public void placeSymbol (int wheel, String symbol) {
+        if (wheels.isEmpty() || symbols.isEmpty()){
+            ok = false;
+            return;
+        }
+        if(wheel < 1) wheel = 1;
+        if(wheel > wheels.size()) 
+        wheel = wheels.size();
+        boolean placed = wheels.get(wheel -1).placeSymbol(symbol);
+        if(!placed){
+            ok = false;
+            return;
+        }
+        ok = true;
+    }
+    /**
+     * gira una rueda
+     */
+    public void spin(int wheel){
+        if(wheels.isEmpty()){
+            ok = false;
+            return;
+        }
+        if(wheel < 1) wheel = 1;
+        if(wheel > wheels.size()) wheel = wheels.size();
+        wheels.get(wheel - 1).spin();
+        ok = true;
+    }
+    /**
+     * gira todas las ruedas
+     * 
+     */
+    public void spin(){
+        if(wheels.isEmpty()){
+            ok = false;
+            return;
+        }
+        for (int i = 0; i < wheels.size(); i++){
+            wheels.get(i).spin();
+        }
+        ok = true;        
+    }
+    /**
+     * hace visible la maquina tragaperras
+     */
+    public void makeVisible(){
+        for(int i = 0; i < wheels.size(); i++){
+            wheels.get(i).makeVisible();
+        }
+        ok = true;
+    }
+    /**
+     * hace que no sea visible en la maquina tragaperras
+     */
+    public void makeInvisible(){
+        for(int i = 0; i < wheels.size(); i++){
+            wheels.get(i).makeInvisible();
+        }
+        ok = true;
+    }
+    /**
+     * retorna los colores de los simbolos visibles
+     * en todas las ruedas de la maquina
+     * ordenados de izq a der
+     * @return arreglo con el color visible de cada rueda
+     */
+    public String[] configuracion() {
+        ok = true;
+        String[] result = new String[wheels.size()];
+        for(int i = 0; i < wheels.size(); i++){
+            result[i] = wheels.get(i).getCurrentSymbol();
+        }
+        return result;
+    }
+    /**
+     * consulta si la configuracion actual de la maquina es la ganadora
+     * es "jackpot" si todas las ruedas muestran el mismo simbolo
+     * @return da true si todas las ruedas muestran el mismo color
+     * si no da false
+     */
+    public boolean isJackpot(){
+        ok = true;
+        if(wheels.isEmpty()){
+            return false;
+        }
+        String first = wheels.get(0).getCurrentSymbol();
+        if(first == null){
+            return false;
+        }
+        for(int i = 1; i < wheels.size(); i++){
+            if(!first.equals(wheels.get(i).getCurrentSymbol())){
+                return false;
+            }
+        }
+        return true;       
     }
 }
