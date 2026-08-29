@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  * Simula una maquina tragamonedas 
@@ -12,6 +13,8 @@ public class Slotmachine
     private List<Wheel> wheels;
     private List<String> symbols;
     private boolean ok;
+    private boolean visible;
+    private Rectangle background;
 
     /**
      * Crear una maquina tragamonedas sin ruedas
@@ -21,6 +24,12 @@ public class Slotmachine
         wheels = new ArrayList <>();
         symbols = new ArrayList <>();
         ok = true;
+        visible = false;
+        background = new Rectangle();
+        background.changeColor("black");
+        background.moveHorizontal(10 - 70); // posicion por defecto de Rectangle es (70,15)
+        background.moveVertical(10 - 15);
+        updateBackground();
     }
 
     /**
@@ -40,7 +49,8 @@ public class Slotmachine
         for(int i = 0; i <wheels.size(); i++){
             wheels.get(i).setPosition(i+1);
         }
-        updateWheelSymbols();
+        updateWheelSymbols(); // modificado para mostrar en configuracion
+        updateBackground();
         ok = true;
     }
     
@@ -51,7 +61,7 @@ public class Slotmachine
      */
     public void delWheel(int pos){
         if(wheels.size()==0){
-            ok = false;
+            fail("No hay ruedas para eliminar.");
             return;
         }
         if (pos <1){
@@ -64,6 +74,8 @@ public class Slotmachine
         for (int i = 0; i < wheels.size(); i++){
             wheels.get(i).setPosition(i+1);
         }
+        updateJackpotVisual();
+        updateBackground();
         ok = true;
     }
     
@@ -87,22 +99,32 @@ public class Slotmachine
         if(!(color.equals("red") || color.equals("black") || color.equals("blue")
             || color.equals("yellow") || color.equals("green") || color.equals("magenta")
             || color.equals("white"))){
-            ok = false;
+            fail("El color '" + color + "' no es un color valido.");
             return;
         }
         if(symbols.contains(color)){
-            ok = false;
+            fail("El color '" + color + "' ya esta registrado. Los simbolos deben ser de colores diferentes.");
             return;
         }
-        if(pos < 1){
-            pos = 1;
-        }
-        if(pos > symbols.size() + 1){
-            pos = symbols.size() + 1;
+        if(pos < 1 || pos > symbols.size() + 1){
+            fail("La posicion " + pos + " no es valida.");
+            return;
         }
         symbols.add(pos - 1, color);
         updateWheelSymbols();
         ok = true;
+    }
+    
+    /**
+     * Marca la ultima operacion como fallida y, si la maquina esta
+     * visible, le muestra el mensaje al usuario con un JOptionPane.
+     * @param message el mensaje a mostrar
+     */
+    private void fail(String message){
+        ok = false;
+        if(visible){
+            JOptionPane.showMessageDialog(null, message);
+        }
     }
     
      /**
@@ -112,49 +134,24 @@ public class Slotmachine
      */
     public void delSymbol(String symbol){
         if(!symbols.contains(symbol)){
-            ok = false;
+            fail("El color '" + symbol + "' no esta registrado en la maquina.");
             return;
         }
         symbols.remove(symbol);
-        updateWheelSymbols();
+        updateWheelSymbols(); // modificado para la configuracion
         ok = true;
     }
-
+    
     /**
-     * Consulta los colores de los simbolos registrados en la maquina, en el orden que fueron
-     * agregados, empezando por la posición 1.
-     * 
-     * @return un arreglo con colores 
-     */
-    public String[] symbols(){
-        ok = true;
-        String[] result = new String[symbols.size()];
-        for (int i = 0; i < symbols.size(); i++){
-            result[i] = symbols.get(i);
-        }
-        return result;
-    }
-
-    /**
-     * Consulta cuantos simbolos distintos tiene la maquina. Como en addSymbol no permitimos colores 
-     * repetidos, este numero siempre sera igual a la cantidad total de simbolos 
-     * 
-     * @return Cantidad de simbolos distintos
-     */
-    public int distinctSymbols(){
-        ok = true;
-        return symbols.size();
-    }
-
-    /**
-     * Termina el simulador, limpia el estado interno de la maquina, dejandola sin ruedas ni simbolos registrados
+     * termina el simulador, limpia el estado interno de la maquina, dejandola sin ruedas ni simbolos
      */
     public void exit(){
         wheels.clear();
         symbols.clear();
         ok = true;
     }
-       /**
+    
+    /**
      * consulta cuantos simbolos distintos tiene la maquina.
      * como en addsimbol no se permiten los colores repetidos,
      * este numero siempre sera igual a la cantidad total de simbolos.
@@ -163,6 +160,7 @@ public class Slotmachine
         ok = true;
         return symbols.size();
     }
+    
     /**
      * @return un arreglo con colores
      */
@@ -174,6 +172,20 @@ public class Slotmachine
         }
         return result;
     }
+    
+    /**
+     * Ajusta el tamano del rectangulo negro de fondo segun cuantas
+     * ruedas hay, y vuelve a traer las ruedas al frente porque
+     * redimensionar el fondo las tapa.
+     */
+    private void updateBackground(){
+        int width = 40 + wheels.size() * 70;
+        background.changeSize(150, width);
+        for(int i = 0; i < wheels.size(); i++){
+            wheels.get(i).bringToFront();
+        }
+    }
+    
     /**
      * recorre todas las ruedas y le pasa a cada una la lista de simbolos actualizada
      */
@@ -181,71 +193,116 @@ public class Slotmachine
         for (int i = 0; i < wheels.size(); i++){
             wheels.get(i).setSymbols(symbols);
         }
+        updateJackpotVisual();
     }
+    
+    /**
+     * revisa si la configuracion actual es jackpot y le avisa a cada
+     * rueda, para que luzca distinta (triangulo dorado) cuando la
+     * maquina esta en estado ganador.
+     */
+    private void updateJackpotVisual(){
+        boolean winning = isJackpot();
+        for(int i = 0; i < wheels.size(); i++){
+            wheels.get(i).setWinning(winning);
+        }
+    }
+    
     /**
      * verifica que haya ruedas y simbolos, luego ajusta la posicion si esta fuera del rango
      * obtiene las ruedas y llama a los simbolos, si la rueda dice false el simbolo no existe
      */
     public void placeSymbol (int wheel, String symbol) {
-        if (wheels.isEmpty() || symbols.isEmpty()){
-            ok = false;
+        if (wheels.isEmpty()){
+            fail("No hay ruedas en la maquina.");
             return;
         }
-        if(wheel < 1) wheel = 1;
-        if(wheel > wheels.size()) 
-        wheel = wheels.size();
+        if (symbols.isEmpty()){
+            fail("No hay simbolos registrados en la maquina.");
+            return;
+        }
+        if(wheel < 1){
+            wheel = 1;
+        }
+        if(wheel > wheels.size()){
+            wheel = wheels.size();
+        }
         boolean placed = wheels.get(wheel -1).placeSymbol(symbol);
         if(!placed){
-            ok = false;
+            fail("El simbolo '" + symbol + "' no esta registrado en la maquina.");
             return;
         }
+        updateJackpotVisual();
         ok = true;
     }
+    
     /**
      * gira una rueda
      */
     public void spin(int wheel){
         if(wheels.isEmpty()){
-            ok = false;
+            fail("No hay ruedas en la maquina.");
             return;
         }
-        if(wheel < 1) wheel = 1;
-        if(wheel > wheels.size()) wheel = wheels.size();
+        if(symbols.isEmpty()){
+            fail("No hay simbolos registrados en la maquina.");
+            return;
+        }
+        if(wheel < 1){
+            wheel = 1;
+        }
+        if(wheel > wheels.size()){
+            wheel = wheels.size();
+        }
         wheels.get(wheel - 1).spin();
+        updateJackpotVisual();
         ok = true;
     }
+    
     /**
      * gira todas las ruedas
      * 
      */
     public void spin(){
         if(wheels.isEmpty()){
-            ok = false;
+            fail("No hay ruedas en la maquina.");
+            return;
+        }
+        if(symbols.isEmpty()){
+            fail("No hay simbolos registrados en la maquina.");
             return;
         }
         for (int i = 0; i < wheels.size(); i++){
             wheels.get(i).spin();
         }
+        updateJackpotVisual();
         ok = true;        
     }
+    
     /**
      * hace visible la maquina tragaperras
      */
     public void makeVisible(){
+        visible = true;
+        background.makeVisible();
         for(int i = 0; i < wheels.size(); i++){
             wheels.get(i).makeVisible();
         }
         ok = true;
     }
+    
     /**
      * hace que no sea visible en la maquina tragaperras
      */
     public void makeInvisible(){
+        visible = false;
+        background.makeInvisible();
         for(int i = 0; i < wheels.size(); i++){
             wheels.get(i).makeInvisible();
         }
         ok = true;
     }
+    
     /**
      * retorna los colores de los simbolos visibles
      * en todas las ruedas de la maquina
@@ -260,6 +317,7 @@ public class Slotmachine
         }
         return result;
     }
+    
     /**
      * consulta si la configuracion actual de la maquina es la ganadora
      * es "jackpot" si todas las ruedas muestran el mismo simbolo
