@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 /**
  * Es la representacion de una rueda en la maquina tragamonedas
  *
@@ -12,14 +13,14 @@ public class Wheel
     private int position;
     private Rectangle frame;
     private Circle symbolShape;
-    private Triangle jackpotMark;
-    private List<String> symbols; // guarda los simbolos en una lista
+    private List<String> symbols; 
     private int currentIndex;  //indica el cual simbolo se esta mostrando (-1 = ninguno)
     private boolean winning; // indica si esta rueda hace parte de un jackpot
     private boolean visible;
+    private boolean locked;
     private int frameX, frameY; // posicion actual del frame en pantalla
     private int symX, symY;     // posicion actual del circulo del simbolo
-    private int markX, markY;   // posicion actual del triangulo dorado
+    private Random random;
     /**
      * CONSTRUCTOR
      * Crea una rueda vacia en la posicion dada. for objects of class Wheel
@@ -28,25 +29,23 @@ public class Wheel
     {
         this.position = position;
         frame = new Rectangle();
-        frame.changeColor("white");
+        frame.changeColor("gray");
         symbolShape = new Circle();
-        jackpotMark = new Triangle();
-        jackpotMark.changeColor("yellow"); // el mas cercano a dorado en shapes
         symbols = new ArrayList<>();
-        currentIndex = -1; // -1 significa "todavia no le han asignado simbolo"
+        currentIndex = -1; 
         winning = false;
         visible = false;
-        frameX = 70; frameY = 15;   // posicion por defecto de Rectangle
-        symX = 20; symY = 15;       // posicion por defecto de Circle
-        markX = 140; markY = 15;    // posicion por defecto de Triangle
+        frameX = 70; frameY = 15;   
+        symX = 20; symY = 15;       
+        random = new Random();
         updatePosition();
     }
     
     /**
      * Cambia la posicion logica de la rueda, usado cuando se agregan o
      * eliminan ruedas en la maquina y hay que renumerar las demas.
-     * Tambien reubica el frame, el circulo y el triangulo en pantalla
-     * para que no queden varias ruedas dibujadas una encima de otra.
+     * Tambien reubica el frame y el circulo en pantalla para que no
+     * queden varias ruedas dibujadas una encima de otra.
      */
     public void setPosition(int position){
           this.position =  position;
@@ -89,12 +88,11 @@ public class Wheel
     }
     
     /**
-     * Avanza al siguiente simbolo. 
-     * devuelve el residuo de la division para que cuando llegue al final vuelva a cero
+     * Elige un simbolo al azar del catalogo de esta rueda.
      */
     public void spin() {
-        if(!symbols.isEmpty()){
-            currentIndex = (currentIndex + 1) % symbols.size();
+        if(!locked && !symbols.isEmpty()){
+            currentIndex = random.nextInt(symbols.size());
             updateColor();
         }
     }
@@ -115,16 +113,15 @@ public class Wheel
     
     /**
      * marca si esta rueda hace parte de la combinacion ganadora actual.
-     * si winning es true, se muestra el triangulo dorado encima de la
-     * rueda (solo si la rueda ya esta visible); si es false, se oculta.
+     * si winning es true, el fondo (frame) se pone amarillo; si es
+     * false, vuelve a su gris normal.
      * @param winning true si la maquina esta en estado ganador
      */
     public void setWinning(boolean winning){
         this.winning = winning;
-        if(visible && winning){
-            jackpotMark.makeVisible();
-        } else {
-            jackpotMark.makeInvisible();
+        frame.changeColor(winning ? "yellow" : "gray");
+        if(visible && getCurrentSymbol() != null){
+            symbolShape.makeVisible(); 
         }
     }
     
@@ -137,9 +134,6 @@ public class Wheel
         if(getCurrentSymbol() != null){
             symbolShape.makeVisible();
         }
-        if(winning){
-            jackpotMark.makeVisible();
-        }
     }
     
     /**
@@ -149,25 +143,22 @@ public class Wheel
         visible = false;
         frame.makeInvisible();
         symbolShape.makeInvisible();
-        jackpotMark.makeInvisible();
     }
     
     /**
-     * Vuelve a dibujar el frame, el circulo y el triangulo sin moverlos,
-     * para que queden al frente en el Canvas (por ejemplo, despues de
-     * que el fondo negro de la maquina cambie de tamano y quede encima).
+     * Vuelve a dibujar el frame y el circulo sin moverlos, para que
+     * queden al frente en el Canvas (por ejemplo, despues de que el
+     * fondo negro de la maquina cambie de tamano y quede encima).
      */
     public void bringToFront(){
         frame.moveHorizontal(0);
         symbolShape.moveHorizontal(0);
-        jackpotMark.moveHorizontal(0);
     }
     
     /**
      * actualiza el circulo del simbolo para que coincida con el color
-     * actualmente visible. El frame (Rectangle) siempre se queda blanco,
-     * es solo el fondo de la rueda. Si no hay simbolo asignado
-     * (getCurrentSymbol da null), el circulo se oculta.
+     * actualmente visible. Si no hay simbolo asignado (getCurrentSymbol
+     * da null), el circulo se oculta.
      */
     private void updateColor(){
         String color = getCurrentSymbol();
@@ -182,9 +173,9 @@ public class Wheel
     }
     
     /**
-     * Mueve el frame, el circulo y el triangulo a la posicion en
-     * pantalla que le corresponde segun la posicion logica de la rueda,
-     * para que cada rueda quede separada de las demas en el Canvas.
+     * Mueve el frame y el circulo a la posicion en pantalla que le
+     * corresponde segun la posicion logica de la rueda, para que cada
+     * rueda quede separada de las demas en el Canvas.
      */
     private void updatePosition(){
         int targetFrameX = 20 + (position - 1) * 70;
@@ -200,12 +191,17 @@ public class Wheel
         symbolShape.moveVertical(targetSymY - symY);
         symX = targetSymX;
         symY = targetSymY;
-        
-        int targetMarkX = targetFrameX;
-        int targetMarkY = targetFrameY - 25;
-        jackpotMark.moveHorizontal(targetMarkX - markX);
-        jackpotMark.moveVertical(targetMarkY - markY);
-        markX = targetMarkX;
-        markY = targetMarkY;
+    }
+    
+    public void lock(){
+        locked = true;
+    }
+    
+    public void unlock(){
+        locked = false;
+    }
+    
+    public boolean isLocked(){
+        return locked;
     }
 }
