@@ -45,12 +45,16 @@ public class Slotmachine
         if(pos > wheels.size() + 1){
             pos = wheels.size() + 1;
         }
-        wheels.add(pos -1, new Wheel(pos));
+        Wheel newWheel = new Wheel(pos);
+        wheels.add(pos -1, newWheel);
         for(int i = 0; i <wheels.size(); i++){
             wheels.get(i).setPosition(i+1);
         }
         updateWheelSymbols(); // modificado para mostrar en configuracion
         updateBackground();
+        if(visible){
+            newWheel.makeVisible();
+        }
         ok = true;
     }
     
@@ -69,6 +73,11 @@ public class Slotmachine
         }
         if(pos > wheels.size()){
             pos = wheels.size();
+        }
+        Wheel targetWheel = wheels.get(pos-1);
+        if(targetWheel.isLocked()){
+            fail("No se puede elimanar puesto que la rueda" + pos + "esta bloqueada, desbloqueala");
+            return;
         }
         wheels.remove(pos-1);
         for (int i = 0; i < wheels.size(); i++){
@@ -97,8 +106,13 @@ public class Slotmachine
      */
     public void addSymbol(int pos, String color){
         if(!(color.equals("red") || color.equals("black") || color.equals("blue")
-            || color.equals("yellow") || color.equals("green") || color.equals("magenta")
-            || color.equals("white"))){
+            || color.equals("green") || color.equals("magenta")
+            || color.equals("orange") || color.equals("purple") || color.equals("pink")
+            || color.equals("brown") || color.equals("cyan")
+            || color.equals("lime") || color.equals("navy") || color.equals("teal")
+            || color.equals("gold") || color.equals("maroon") || color.equals("olive")
+            || color.equals("indigo") || color.equals("violet") || color.equals("turquoise")
+            || color.equals("coral") || color.equals("salmon") || color.equals("silver"))){
             fail("El color '" + color + "' no es un color valido.");
             return;
         }
@@ -122,9 +136,7 @@ public class Slotmachine
      */
     private void fail(String message){
         ok = false;
-        if(visible){
-            JOptionPane.showMessageDialog(null, message);
-        }
+        JOptionPane.showMessageDialog(null, message);
     }
     
      /**
@@ -339,5 +351,84 @@ public class Slotmachine
             }
         }
         return true;       
+    }
+    
+    
+    /**
+     * Intercambia dos ruedas de posición dadas por sus índices.
+     * Falla si alguna de las ruedas está bloqueada.
+     * @param wheel1 posición de la primera rueda
+     * @param wheel2 posición de la segunda rueda
+     */
+    public void swap(int wheel1, int wheel2) {
+        if (wheels.isEmpty()) {
+            fail("No hay ruedas en la maquina.");
+            return;
+        }
+        if (wheel1 < 1 || wheel1 > wheels.size() || wheel2 < 1 || wheel2 > wheels.size()) {
+            fail("Posición de rueda inválida para el intercambio.");
+            return;
+        }
+        
+        Wheel w1 = wheels.get(wheel1 - 1);
+        Wheel w2 = wheels.get(wheel2 - 1);
+
+        if (w1.isLocked()) {
+            fail("No se puede rotar puesto que la rueda " + wheel1 + " esta bloqueada, desbloqueala");
+            return;
+        }
+        if (w2.isLocked()) {
+            fail("No se puede rotar puesto que la rueda " + wheel2 + " esta bloqueada, desbloqueala");
+            return;
+        }
+
+        // Intercambiar en la lista
+        wheels.set(wheel1 - 1, w2);
+        wheels.set(wheel2 - 1, w1);
+
+        // Actualizar posiciones visuales y lógicas
+        for (int i = 0; i < wheels.size(); i++) {
+            wheels.get(i).setPosition(i + 1);
+        }
+        updateBackground();
+        ok = true;
+    }
+
+    /**
+     * Bloquea una rueda específica para que no pueda ser rotada ni eliminada.
+     * @param wheel posición de la rueda a bloquear
+     */
+    public void lock(int wheel) {
+        if (wheels.isEmpty()) {
+            fail("No hay ruedas en la maquina.");
+            return;
+        }
+        if (wheel < 1 || wheel < 1) {
+            wheel = 1;
+        }
+        if (wheel > wheels.size()) {
+            wheel = wheels.size();
+        }
+        wheels.get(wheel - 1).lock();
+        ok = true;
+    }
+
+    /**
+     * Desbloquea una rueda específica.
+     * @param wheel posición de la rueda a desbloquear
+     */
+    public void unlock(int wheel) {
+        if (wheels.isEmpty()) {
+            fail("No hay ruedas en la maquina.");
+            return;
+        }
+        if (wheel < 1) {
+            wheel = 1;
+        }
+        if (wheel > wheels.size()) {
+            wheel = wheels.size();
+        }
+        wheels.get(wheel - 1).unlock();
+        ok = true;
     }
 }
