@@ -15,7 +15,7 @@ public class Wheel
     private Circle symbolShape;
     private List<String> symbols; 
     private int currentIndex;  //indica el cual simbolo se esta mostrando (-1 = ninguno)
-    private boolean winning; // indica si esta rueda hace parte de un jackpot
+    private boolean winning; // indica si esta rueda hace pAarte de un jackpot
     private boolean visible;
     private boolean locked;
     private int frameX, frameY; // posicion actual del frame en pantalla
@@ -70,12 +70,13 @@ public class Wheel
         this.symbols = new ArrayList<>(symbols);
         if(previousColor != null && this.symbols.contains(previousColor)){
             currentIndex = this.symbols.indexOf(previousColor);
+        } else if(!this.symbols.isEmpty()){
+            currentIndex = 0;
         } else {
             currentIndex = -1;
         }
         updateColor();
     }
-    
     /**
      * devuelve el color del simbolo que se esta mostrando actualmente.
      * si la rueda no tiene simbolo asignado da null
