@@ -17,6 +17,7 @@ public class Slotmachine
     private Rectangle background;
 
     /**
+     * CONSTRUCTOR
      * Crear una maquina tragamonedas sin ruedas
      */
     public Slotmachine()
@@ -290,9 +291,78 @@ public class Slotmachine
         updateJackpotVisual();
         ok = true;        
     }
-    
     /**
-     * hace visible la maquina tragaperras
+     * Este Spin gira una rueda especifica con un numero determinado de pasos
+     * por cada paso se elige un simbolo al azar
+     * @param wheel posicion de la rueda a girar
+     * @param steps numero de pasos a girar
+     */
+    public void spin(int wheel, int steps) {
+       if(wheels.isEmpty()) {
+            fail("No hay ruedas en la maquina");
+            return;
+        } 
+       if(symbols.isEmpty()){
+           fail("No hay simbolos registrados en la maquina");
+           return;
+        } 
+       if(wheel < 1){
+            wheel = 1;
+        }
+       if(wheel > wheels.size()){
+           wheel = wheels.size(); 
+        }
+       if(steps < 1){
+           fail("El numero de pasos debe ser al menos 1");
+           return;
+        }
+       Wheel target = wheels.get(wheel -1);
+       if(target.isLocked()){
+            fail("No se puede girar si esta bloqueada la rueda");
+            return;
+        }
+       for(int i = 0; i < steps; i++){
+            target.spin();
+            if(visible){
+                Canvas.getCanvas().wait(300);
+            }
+        }
+       updateJackpotVisual();
+       ok = true;
+    }
+    /**
+     * le da a la maquina una configuracion que querramos
+     * recibiendo un arreglo de colores
+     * coloca a cada rueda el colo que debe estar
+     * @param setSymbols arreglo del color que deberia mostrar
+     */
+    public void spin(String[] setSymbols){
+        if(wheels.isEmpty()){
+            fail("No hay ruedas en la maquina");
+            return;
+        }
+        if(symbols.isEmpty()){
+            fail("No hay simbolos registrados de momento en la maquina");
+            return;
+        }
+        if(setSymbols.length != wheels.size()){
+            fail("El arreglo debe tener" + wheels.size() + "colores uno por cada rueda");
+            return;
+        }
+        for(int i = 0; i < setSymbols.length; i++){
+            if(!symbols.contains(setSymbols[i])){
+                fail("El color'" + setSymbols[i] + "'no esta registrado");
+                return;            
+            }            
+        }
+        for(int i = 0; i < wheels.size(); i++){
+            wheels.get(i).placeSymbol(setSymbols[i]);
+        }
+        updateJackpotVisual();
+        ok = true;
+    }
+    /**
+     * hace visible la maquina slotmachine
      */
     public void makeVisible(){
         visible = true;
@@ -304,7 +374,7 @@ public class Slotmachine
     }
     
     /**
-     * hace que no sea visible en la maquina tragaperras
+     * hace que no sea visible en la maquina slotmachine
      */
     public void makeInvisible(){
         visible = false;
