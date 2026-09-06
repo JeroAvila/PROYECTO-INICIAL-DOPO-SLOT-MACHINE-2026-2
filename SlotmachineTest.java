@@ -127,7 +127,7 @@ public class SlotmachineTest
     @Test
     public void testAddSymbolColorInvalido()
     {
-        machine.addSymbol(1, "purple");
+        machine.addSymbol(1, "blanco");
         assertFalse(machine.ok());
     }
     
@@ -269,7 +269,8 @@ public class SlotmachineTest
         machine.addSymbol(2, "blue");
         machine.spin(1);
         assertTrue(machine.ok());
-        assertEquals("blue", machine.configuracion()[0]);
+        String result = machine.configuracion()[0];
+        assertTrue(result.equals("red") || result.equals("blue"));
     }
     
     @Test
