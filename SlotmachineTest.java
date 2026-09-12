@@ -2,8 +2,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 /**
- * The test class SlotmachineTest.
+ * Tests de Slotmachine, cubriendo unicamente los metodos del ciclo 1:
+ * addWheel, delWheel, addSymbol, delSymbol, placeSymbol, spin(wheel),
+ * spin(), symbols(), distinctSymbolos(), configuracion(), isJackpot(),
+ * makeVisible(), makeInvisible(), exit(), ok().
  *
  * @author Laura Juliana Parra Velandia
  * @author Thomas Jeronimo Avila Castillo
@@ -12,65 +16,69 @@ import org.junit.jupiter.api.Test;
 public class SlotmachineTest
 {
     private Slotmachine machine;
-    
-    /**
-     * Default constructor for test class SlotmachineTest
-     */
-    public SlotmachineTest()
-    {
-    }
-    /**
-     * Sets up the test fixture.
-     *
-     * Called before every test case method.
-     */
+
     @BeforeEach
     public void setUp()
     {
         machine = new Slotmachine();
     }
-    
+
+    @AfterEach
+    public void tearDown()
+    {
+    }
+
     @Test
-    public void testAddWheelEnMaquinaVacia()
+    public void shouldAddWheelToEmptyMachine()
     {
         machine.addWheel(1);
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testAddWheelEnPosicionIntermedia()
+    public void shouldAddWheelAtMiddlePosition()
     {
         machine.addWheel(1);
         machine.addWheel(2);
         machine.addWheel(2);
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testAddWheelConPosicionMenorA1()
+    public void shouldClampPositionBelowMinimumWhenAddingWheel()
     {
         machine.addWheel(0);
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testAddWheelConPosicionMayorAlMaximo()
+    public void shouldClampPositionAboveMaximumWhenAddingWheel()
     {
         machine.addWheel(1);
         machine.addWheel(2);
         machine.addWheel(10);
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testDelWheelEnMaquinaVacia()
+    public void shouldNotAutomaticallyShowSymbolOnNewWheel()
+    {
+        machine.addSymbol(1, "red");
+        machine.addSymbol(2, "blue");
+        machine.addWheel(1);
+        String[] config = machine.configuracion();
+        assertNull(config[0]);
+    }
+
+    @Test
+    public void shouldNotDeleteWheelFromEmptyMachine()
     {
         machine.delWheel(1);
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testDelWheelEnPosicionValida()
+    public void shouldDeleteWheelAtValidPosition()
     {
         machine.addWheel(1);
         machine.addWheel(2);
@@ -78,143 +86,167 @@ public class SlotmachineTest
         machine.delWheel(2);
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testDelWheelConPosicionMenorA1()
+    public void shouldClampPositionBelowMinimumWhenDeletingWheel()
     {
         machine.addWheel(1);
         machine.addWheel(2);
         machine.delWheel(0);
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testDelWheelConPosicionMayorAlMaximo()
+    public void shouldClampPositionAboveMaximumWhenDeletingWheel()
     {
         machine.addWheel(1);
         machine.addWheel(2);
         machine.delWheel(100);
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testDelWheelDespuesDeVaciarLaMaquina()
+    public void shouldNotDeleteAgainAfterMachineBecomesEmpty()
     {
         machine.addWheel(1);
         machine.delWheel(1);
         machine.delWheel(1);
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testAddWheelDespuesDeTenerSimbolos()
+    public void shouldNotDeleteLockedWheel()
     {
-        machine.addSymbol(1, "red");
-        machine.addSymbol(2, "blue");
         machine.addWheel(1);
-        String[] config = machine.configuracion();
-        assertEquals(1, config.length);
-        assertEquals("red", config[0]);
+        machine.lock(1);
+        machine.delWheel(1);
+        assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testAddSymbolColorValido()
+    public void shouldAddValidSymbol()
     {
         machine.addSymbol(1, "red");
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testAddSymbolColorInvalido()
+    public void shouldNotAddSymbolWithInvalidColor()
     {
         machine.addSymbol(1, "blanco");
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testAddSymbolColorRepetido()
+    public void shouldNotAddSymbolWithDuplicateColor()
     {
         machine.addSymbol(1, "red");
         machine.addSymbol(2, "red");
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testAddSymbolConPosicionMenorA1()
+    public void shouldNotAddSymbolWithPositionBelowMinimum()
     {
         machine.addSymbol(0, "blue");
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testAddSymbolConPosicionMayorAlMaximo()
+    public void shouldNotAddSymbolWithPositionAboveMaximum()
     {
         machine.addSymbol(1, "red");
         machine.addSymbol(2, "blue");
         machine.addSymbol(10, "green");
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testAddSymbolPosicionInvalidaNoAgregaNada()
+    public void shouldNotChangeCatalogWhenAddSymbolFails()
     {
         machine.addSymbol(1, "red");
         machine.addSymbol(0, "blue");
         assertEquals(1, machine.symbols().length);
     }
-    
+
     @Test
-    public void testAddSymbolPosicionEnElLimiteInferiorEsValida()
+    public void shouldAddSymbolAtLowerBoundaryPosition()
     {
         machine.addSymbol(1, "red");
         assertTrue(machine.ok());
         assertEquals(1, machine.symbols().length);
     }
-    
+
     @Test
-    public void testAddSymbolPosicionEnElLimiteSuperiorEsValida()
+    public void shouldAddSymbolAtUpperBoundaryPosition()
     {
         machine.addSymbol(1, "red");
         machine.addSymbol(2, "blue");
         assertTrue(machine.ok());
         assertEquals(2, machine.symbols().length);
     }
-    
+
     @Test
-    public void testAddSymbolInvalidoNoAfectaRuedasExistentes()
+    public void shouldNotAffectExistingWheelsWhenAddSymbolFails()
     {
         machine.addWheel(1);
         machine.addSymbol(1, "red");
+        machine.placeSymbol(1, "red");
         machine.addSymbol(5, "blue");
         assertEquals("red", machine.configuracion()[0]);
     }
-    
+
     @Test
-    public void testPlaceSymbolSinRuedas()
+    public void shouldRemoveExistingSymbol()
+    {
+        machine.addSymbol(1, "red");
+        machine.delSymbol("red");
+        assertTrue(machine.ok());
+    }
+
+    @Test
+    public void shouldNotRemoveNonExistentSymbol()
+    {
+        machine.delSymbol("red");
+        assertFalse(machine.ok());
+    }
+
+    @Test
+    public void shouldReflectRemovalInSymbolsList()
+    {
+        machine.addSymbol(1, "red");
+        machine.addSymbol(2, "blue");
+        machine.delSymbol("red");
+        assertEquals(1, machine.symbols().length);
+        assertEquals("blue", machine.symbols()[0]);
+    }
+
+    @Test
+    public void shouldNotPlaceSymbolWithoutWheels()
     {
         machine.placeSymbol(1, "red");
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testPlaceSymbolSinSimbolos()
+    public void shouldNotPlaceSymbolWithoutRegisteredSymbols()
     {
         machine.addWheel(1);
         machine.placeSymbol(1, "red");
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testPlaceSymbolConSimboloInexistente()
+    public void shouldNotPlaceNonExistentSymbol()
     {
         machine.addWheel(1);
         machine.addSymbol(1, "red");
         machine.placeSymbol(1, "blue");
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testPlaceSymbolValido()
+    public void shouldPlaceValidSymbol()
     {
         machine.addWheel(1);
         machine.addSymbol(1, "red");
@@ -223,9 +255,9 @@ public class SlotmachineTest
         assertTrue(machine.ok());
         assertEquals("blue", machine.configuracion()[0]);
     }
-    
+
     @Test
-    public void testPlaceSymbolConRuedaMenorA1()
+    public void shouldClampWheelBelowMinimumWhenPlacingSymbol()
     {
         machine.addWheel(1);
         machine.addWheel(2);
@@ -234,9 +266,9 @@ public class SlotmachineTest
         assertTrue(machine.ok());
         assertEquals("red", machine.configuracion()[0]);
     }
-    
+
     @Test
-    public void testPlaceSymbolConRuedaMayorAlMaximo()
+    public void shouldClampWheelAboveMaximumWhenPlacingSymbol()
     {
         machine.addWheel(1);
         machine.addWheel(2);
@@ -245,24 +277,34 @@ public class SlotmachineTest
         assertTrue(machine.ok());
         assertEquals("red", machine.configuracion()[1]);
     }
-    
+
     @Test
-    public void testSpinUnaRuedaSinRuedas()
+    public void shouldNotPlaceSymbolOnLockedWheel()
+    {
+        machine.addWheel(1);
+        machine.addSymbol(1, "red");
+        machine.lock(1);
+        machine.placeSymbol(1, "red");
+        assertFalse(machine.ok());
+    }
+
+    @Test
+    public void shouldNotSpinSingleWheelWithoutWheels()
     {
         machine.spin(1);
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testSpinUnaRuedaSinSimbolos()
+    public void shouldNotSpinSingleWheelWithoutSymbols()
     {
         machine.addWheel(1);
         machine.spin(1);
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testSpinUnaRuedaAvanzaAlSiguienteSimbolo()
+    public void shouldSpinSingleWheelToRegisteredSymbol()
     {
         machine.addWheel(1);
         machine.addSymbol(1, "red");
@@ -272,50 +314,135 @@ public class SlotmachineTest
         String result = machine.configuracion()[0];
         assertTrue(result.equals("red") || result.equals("blue"));
     }
-    
+
     @Test
-    public void testSpinTodasSinRuedas()
+    public void shouldNotSpinLockedWheel()
+    {
+        machine.addWheel(1);
+        machine.addSymbol(1, "red");
+        machine.placeSymbol(1, "red");
+        machine.lock(1);
+        machine.spin(1);
+        assertFalse(machine.ok());
+        assertEquals("red", machine.configuracion()[0]);
+    }
+
+    @Test
+    public void shouldNotSpinAllWithoutWheels()
     {
         machine.spin();
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testSpinTodasSinSimbolos()
+    public void shouldNotSpinAllWithoutSymbols()
     {
         machine.addWheel(1);
         machine.spin();
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testSpinTodasLasRuedas()
+    public void shouldSpinAllWheelsToRegisteredSymbols()
     {
         machine.addWheel(1);
         machine.addWheel(2);
         machine.addSymbol(1, "red");
         machine.addSymbol(2, "blue");
         machine.spin();
+        assertTrue(machine.ok());
+        for(String result : machine.configuracion()){
+            assertTrue(result.equals("red") || result.equals("blue"));
+        }
+    }
+
+    @Test
+    public void shouldNotChangeLockedWheelWhenSpinningAll()
+    {
+        machine.addWheel(1);
+        machine.addWheel(2);
+        machine.addSymbol(1, "red");
+        machine.addSymbol(2, "blue");
+        machine.placeSymbol(1, "red");
+        machine.lock(1);
+        machine.spin();
+        assertEquals("red", machine.configuracion()[0]);
+    }
+
+    @Test
+    public void shouldReturnEmptyArrayWhenNoSymbolsRegistered()
+    {
+        assertEquals(0, machine.symbols().length);
+    }
+
+    @Test
+    public void shouldReturnSymbolsInInsertionOrder()
+    {
+        machine.addSymbol(1, "red");
+        machine.addSymbol(2, "blue");
+        String[] resultado = machine.symbols();
+        assertEquals(2, resultado.length);
+        assertEquals("red", resultado[0]);
+        assertEquals("blue", resultado[1]);
+    }
+
+    @Test
+    public void shouldReturnZeroDistinctSymbolsWhenEmpty()
+    {
+        assertEquals(0, machine.distinctSymbolos());
+    }
+
+    @Test
+    public void shouldReturnCorrectDistinctSymbolCount()
+    {
+        machine.addSymbol(1, "red");
+        machine.addSymbol(2, "blue");
+        machine.addSymbol(3, "green");
+        assertEquals(3, machine.distinctSymbolos());
+    }
+
+    @Test
+    public void shouldReturnEmptyConfigurationWhenNoWheels()
+    {
+        assertEquals(0, machine.configuracion().length);
+    }
+
+    @Test
+    public void shouldReturnNullForWheelWithoutSymbolAssigned()
+    {
+        machine.addWheel(1);
+        assertNull(machine.configuracion()[0]);
+    }
+
+    @Test
+    public void shouldReturnCurrentSymbolsInWheelOrder()
+    {
+        machine.addWheel(1);
+        machine.addWheel(2);
+        machine.addSymbol(1, "red");
+        machine.addSymbol(2, "blue");
+        machine.placeSymbol(1, "red");
+        machine.placeSymbol(2, "blue");
         String[] config = machine.configuracion();
-        assertEquals("blue", config[0]);
+        assertEquals("red", config[0]);
         assertEquals("blue", config[1]);
     }
-    
+
     @Test
-    public void testIsJackpotSinRuedas()
+    public void shouldNotBeJackpotWithoutWheels()
     {
         assertFalse(machine.isJackpot());
     }
-    
+
     @Test
-    public void testIsJackpotConRuedaSinSimbolo()
+    public void shouldNotBeJackpotWhenWheelHasNoSymbol()
     {
         machine.addWheel(1);
         assertFalse(machine.isJackpot());
     }
-    
+
     @Test
-    public void testIsJackpotConTodasIguales()
+    public void shouldBeJackpotWhenAllWheelsMatch()
     {
         machine.addWheel(1);
         machine.addWheel(2);
@@ -324,9 +451,9 @@ public class SlotmachineTest
         machine.placeSymbol(2, "red");
         assertTrue(machine.isJackpot());
     }
-    
+
     @Test
-    public void testIsJackpotConDistintas()
+    public void shouldNotBeJackpotWhenWheelsDiffer()
     {
         machine.addWheel(1);
         machine.addWheel(2);
@@ -336,9 +463,9 @@ public class SlotmachineTest
         machine.placeSymbol(2, "blue");
         assertFalse(machine.isJackpot());
     }
-    
+
     @Test
-    public void testIsJackpotCambiaAlEliminarLaRuedaDistinta()
+    public void shouldUpdateJackpotStatusWhenDifferentWheelIsRemoved()
     {
         machine.addWheel(1);
         machine.addWheel(2);
@@ -352,88 +479,69 @@ public class SlotmachineTest
         machine.delWheel(3);
         assertTrue(machine.isJackpot());
     }
-    
+
     @Test
-    public void testDelSymbolExistente()
+    public void shouldSucceedWhenMakingMachineVisible()
     {
-        machine.addSymbol(1, "red");
-        machine.delSymbol("red");
+        machine.addWheel(1);
+        machine.makeVisible();
         assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testDelSymbolInexistente()
+    public void shouldSucceedWhenMakingMachineInvisible()
     {
-        machine.delSymbol("red");
-        assertFalse(machine.ok());
+        machine.addWheel(1);
+        machine.makeVisible();
+        machine.makeInvisible();
+        assertTrue(machine.ok());
     }
-    
+
     @Test
-    public void testSymbolsEnMaquinaVacia()
-    {
-        String[] resultado = machine.symbols();
-        assertEquals(0, resultado.length);
-    }
-    
-    @Test
-    public void testSymbolsConVariosSimbolos()
-    {
-        machine.addSymbol(1, "red");
-        machine.addSymbol(2, "blue");
-        String[] resultado = machine.symbols();
-        assertEquals(2, resultado.length);
-        assertEquals("red", resultado[0]);
-        assertEquals("blue", resultado[1]);
-    }
-    
-    @Test
-    public void testDistinctSymbolsEnMaquinaVacia()
-    {
-        assertEquals(0, machine.distinctSymbolos());
-    }
-    
-    @Test
-    public void testDistinctSymbolsConVariosSimbolos()
-    {
-        machine.addSymbol(1, "red");
-        machine.addSymbol(2, "blue");
-        machine.addSymbol(3, "green");
-        assertEquals(3, machine.distinctSymbolos());
-    }
-    
-    @Test
-    public void testExitDejaLaMaquinaSinRuedas()
+    public void shouldClearWheelsOnExit()
     {
         machine.addWheel(1);
         machine.addWheel(2);
         machine.exit();
-        assertEquals(0, machine.symbols().length);
         machine.delWheel(1);
         assertFalse(machine.ok());
     }
-    
+
     @Test
-    public void testExitDejaLaMaquinaSinSimbolos()
+    public void shouldClearSymbolsOnExit()
     {
         machine.addSymbol(1, "red");
         machine.addSymbol(2, "blue");
         machine.exit();
         assertEquals(0, machine.symbols().length);
     }
-    
+
     @Test
-    public void testExitSiempreTieneExito()
+    public void shouldAlwaysSucceedOnExit()
     {
         machine.exit();
         assertTrue(machine.ok());
     }
-    /**
-     * Tears down the test fixture.
-     *
-     * Called after every test case method.
-     */
-    @AfterEach
-    public void tearDown()
+
+    @Test
+    public void shouldBeTrueByDefaultAfterCreation()
     {
+        assertTrue(machine.ok());
+    }
+
+    @Test
+    public void shouldBeFalseAfterFailedOperation()
+    {
+        machine.delWheel(1);
+        assertFalse(machine.ok());
+    }
+
+    @Test
+    public void shouldBeTrueAfterOperationFollowingAFailure()
+    {
+        machine.delWheel(1);
+        assertFalse(machine.ok());
+        machine.addWheel(1);
+        assertTrue(machine.ok());
     }
 }
