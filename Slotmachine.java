@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
  * Simula una maquina tragamonedas 
  * @author Laura Juliana Parra Velandia
  * @author Thomas Jeronimo Avila Castillo
- * @version 1.0
+ * @version 2.0
  */
 public class Slotmachine
 {
