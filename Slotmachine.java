@@ -137,7 +137,9 @@ public class Slotmachine
      */
     private void fail(String message){
         ok = false;
-        JOptionPane.showMessageDialog(null, message);
+        if(visible){
+            JOptionPane.showMessageDialog(null, message);
+        }
     }
     
      /**
@@ -151,7 +153,7 @@ public class Slotmachine
             return;
         }
         symbols.remove(symbol);
-        updateWheelSymbols(); // modificado para la configuracion
+        updateWheelSymbols();
         ok = true;
     }
     
@@ -240,7 +242,12 @@ public class Slotmachine
         if(wheel > wheels.size()){
             wheel = wheels.size();
         }
-        boolean placed = wheels.get(wheel -1).placeSymbol(symbol);
+        Wheel targetWheel = wheels.get(wheel - 1);
+        if(targetWheel.isLocked()){
+            fail("La rueda " + wheel + " esta bloqueada.");
+            return;
+        }
+        boolean placed = targetWheel.placeSymbol(symbol);
         if(!placed){
             fail("El simbolo '" + symbol + "' no esta registrado en la maquina.");
             return;
@@ -267,7 +274,12 @@ public class Slotmachine
         if(wheel > wheels.size()){
             wheel = wheels.size();
         }
-        wheels.get(wheel - 1).spin();
+        Wheel targetWheel = wheels.get(wheel - 1);
+        if(targetWheel.isLocked()){
+            fail("La rueda " + wheel + " esta bloqueada.");
+            return;
+        }
+        targetWheel.spin();
         updateJackpotVisual();
         ok = true;
     }
@@ -291,6 +303,7 @@ public class Slotmachine
         updateJackpotVisual();
         ok = true;        
     }
+    
     /**
      * Este Spin gira una rueda especifica con un numero determinado de pasos
      * por cada paso se elige un simbolo al azar
@@ -330,6 +343,7 @@ public class Slotmachine
        updateJackpotVisual();
        ok = true;
     }
+    
     /**
      * le da a la maquina una configuracion que querramos
      * recibiendo un arreglo de colores
@@ -356,11 +370,15 @@ public class Slotmachine
             }            
         }
         for(int i = 0; i < wheels.size(); i++){
-            wheels.get(i).placeSymbol(setSymbols[i]);
+            Wheel target = wheels.get(i);
+            if(!target.isLocked()){
+                target.placeSymbol(setSymbols[i]);
+            }
         }
         updateJackpotVisual();
         ok = true;
     }
+    
     /**
      * hace visible la maquina slotmachine
      */
@@ -439,10 +457,8 @@ public class Slotmachine
             fail("Posición de rueda inválida para el intercambio.");
             return;
         }
-        
         Wheel w1 = wheels.get(wheel1 - 1);
         Wheel w2 = wheels.get(wheel2 - 1);
-
         if (w1.isLocked()) {
             fail("No se puede rotar puesto que la rueda " + wheel1 + " esta bloqueada, desbloqueala");
             return;
@@ -451,12 +467,8 @@ public class Slotmachine
             fail("No se puede rotar puesto que la rueda " + wheel2 + " esta bloqueada, desbloqueala");
             return;
         }
-
-        // Intercambiar en la lista
         wheels.set(wheel1 - 1, w2);
         wheels.set(wheel2 - 1, w1);
-
-        // Actualizar posiciones visuales y lógicas
         for (int i = 0; i < wheels.size(); i++) {
             wheels.get(i).setPosition(i + 1);
         }
@@ -473,7 +485,7 @@ public class Slotmachine
             fail("No hay ruedas en la maquina.");
             return;
         }
-        if (wheel < 1 || wheel < 1) {
+        if (wheel < 1) {
             wheel = 1;
         }
         if (wheel > wheels.size()) {
