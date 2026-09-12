@@ -14,8 +14,8 @@ public class Wheel
     private Rectangle frame;
     private Circle symbolShape;
     private List<String> symbols; 
-    private int currentIndex;  //indica el cual simbolo se esta mostrando (-1 = ninguno)
-    private boolean winning; // indica si esta rueda hace pAarte de un jackpot
+    private int currentIndex;  
+    private boolean winning;  
     private boolean visible;
     private boolean locked;
     private int frameX, frameY; // posicion actual del frame en pantalla
@@ -70,8 +70,6 @@ public class Wheel
         this.symbols = new ArrayList<>(symbols);
         if(previousColor != null && this.symbols.contains(previousColor)){
             currentIndex = this.symbols.indexOf(previousColor);
-        } else if(!this.symbols.isEmpty()){
-            currentIndex = 0;
         } else {
             currentIndex = -1;
         }
@@ -186,7 +184,7 @@ public class Wheel
         frameX = targetFrameX;
         frameY = targetFrameY;
         
-        int targetSymX = targetFrameX + 5; // centrado dentro del frame (40x30 vs circulo 30)
+        int targetSymX = targetFrameX + 5; 
         int targetSymY = targetFrameY;
         symbolShape.moveHorizontal(targetSymX - symX);
         symbolShape.moveVertical(targetSymY - symY);
