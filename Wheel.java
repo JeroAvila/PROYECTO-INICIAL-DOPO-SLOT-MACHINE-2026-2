@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.Random;
 /**
  * Es la representacion de una rueda en la maquina tragamonedas
- *
+ * Hola jero, jero ama a camila
  * @author Thomas Jeronimo Avila Casillo
  * @author Laura Juliana Parra Velandia
  * @version (a version number or a date)
