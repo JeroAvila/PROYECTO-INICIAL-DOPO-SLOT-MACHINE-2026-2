@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
  * Simula una maquina tragamonedas 
  * @author Laura Juliana Parra Velandia
  * @author Thomas Jeronimo Avila Castillo
- * @version 1.0
+ * @version 2.0
  */
 public class Slotmachine
 {
@@ -97,9 +97,7 @@ public class Slotmachine
         }
         Wheel newWheel = new Wheel(pos);
         wheels.add(pos -1, newWheel);
-        for(int i = 0; i <wheels.size(); i++){
-            wheels.get(i).setPosition(i+1);
-        }
+        renumber();
         updateWheelSymbols(); // modificado para mostrar en configuracion
         updateBackground();
         if(visible){
@@ -114,25 +112,16 @@ public class Slotmachine
      * @param pos posicion de la rueda a eliminar
      */
     public void delWheel(int pos){
-        if(wheels.size()==0){
-            fail("No hay ruedas para eliminar.");
+        if(noWheels("No hay ruedas para eliminar.")){
             return;
         }
-        if (pos <1){
-            pos = 1;
-        }
-        if(pos > wheels.size()){
-            pos = wheels.size();
-        }
+        pos = clamp(pos);
         Wheel targetWheel = wheels.get(pos-1);
-        if(targetWheel.isLocked()){
-            fail("No se puede elimanar puesto que la rueda" + pos + "esta bloqueada, desbloqueala");
+        if(blocked(targetWheel, "No se puede elimanar puesto que la rueda" + pos + "esta bloqueada, desbloqueala")){
             return;
         }
         wheels.remove(pos-1);
-        for (int i = 0; i < wheels.size(); i++){
-            wheels.get(i).setPosition(i+1);
-        }
+        renumber();
         updateJackpotVisual();
         updateBackground();
         ok = true;
@@ -197,7 +186,7 @@ public class Slotmachine
      */
     public void delSymbol(String symbol){
         if(!symbols.contains(symbol)){
-            fail("El color '" + symbol + "' no esta registrado en la maquina.");
+            fail("El color'" + symbol + "' no esta registrado en la maquina.");
             return;
         }
         symbols.remove(symbol);
@@ -272,27 +261,84 @@ public class Slotmachine
     }
     
     /**
+     * Renumera las posiciones de todas las ruedas segun el orden actual en la lsita. Se usa cada 
+     * vez que la lista de ruedas cambia de orden ya sea al agregar, eliminar o intercambair ruedas
+     */
+    private void renumber(){
+        for(int i = 0; i < wheels.size(); i++){
+            wheels.get(i).setPosition(i+1);
+        }
+    }
+    
+    /**
+     * Si no hay ruedas registradas, la operación falla
+     * @param message mensaje a mostrar la falla
+     * @return true si la maquina no tiene ruedas
+     */
+    private boolean noWheels(String message){
+        if(wheels.isEmpty()){
+            fail(message);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Si no hay simbolos registrado falla
+     * @param message mensaje a mostrar si falla
+     * @return true si la maquina no tiene simbolos
+     */
+    private boolean noSymbols(String message){
+        if(symbols.isEmpty()){
+            fail(message);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Ajusta un indice de rueda al rango valido.
+     * @param wheel indice de rueda a ajustar
+     * @return el indice ya dentro del rango valido
+     */
+    private int clamp(int wheel){
+        if(wheel < 1){
+            return 1;
+        }
+        if(wheel > wheels.size()){
+            return wheels.size();
+        }
+        return wheel;
+    }
+    
+     /**
+     * Si la rueda dada esta bloqueada falla 
+     * @param wheel la rueda a revisar
+     * @param message mensaje a mostrar si esta bloqueada
+     * @return true si la rueda esta bloqueada
+     */
+    private boolean blocked(Wheel wheel, String message){
+        if(wheel.isLocked()){
+            fail(message);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
      * verifica que haya ruedas y simbolos, luego ajusta la posicion si esta fuera del rango
      * obtiene las ruedas y llama a los simbolos, si la rueda dice false el simbolo no existe
      */
     public void placeSymbol (int wheel, String symbol) {
-        if (wheels.isEmpty()){
-            fail("No hay ruedas en la maquina.");
+        if(noWheels("No hay ruedas en la maquina.")){
             return;
         }
-        if (symbols.isEmpty()){
-            fail("No hay simbolos registrados en la maquina.");
+        if(noSymbols("No hay simbolos registrados en la maquina.")){
             return;
         }
-        if(wheel < 1){
-            wheel = 1;
-        }
-        if(wheel > wheels.size()){
-            wheel = wheels.size();
-        }
+        wheel = clamp(wheel);
         Wheel targetWheel = wheels.get(wheel - 1);
-        if(targetWheel.isLocked()){
-            fail("La rueda " + wheel + " esta bloqueada.");
+        if(blocked(targetWheel, "La rueda " + wheel + " esta bloqueada.")){
             return;
         }
         boolean placed = targetWheel.placeSymbol(symbol);
@@ -308,23 +354,15 @@ public class Slotmachine
      * gira una rueda
      */
     public void spin(int wheel){
-        if(wheels.isEmpty()){
-            fail("No hay ruedas en la maquina.");
+        if(noWheels("No hay ruedas en la maquina.")){
             return;
         }
-        if(symbols.isEmpty()){
-            fail("No hay simbolos registrados en la maquina.");
+        if(noSymbols("No hay simbolos registrados en la maquina.")){
             return;
         }
-        if(wheel < 1){
-            wheel = 1;
-        }
-        if(wheel > wheels.size()){
-            wheel = wheels.size();
-        }
+        wheel = clamp(wheel);
         Wheel targetWheel = wheels.get(wheel - 1);
-        if(targetWheel.isLocked()){
-            fail("La rueda " + wheel + " esta bloqueada.");
+        if(blocked(targetWheel, "La rueda " + wheel + " esta bloqueada.")){
             return;
         }
         targetWheel.spin();
@@ -337,20 +375,19 @@ public class Slotmachine
      * 
      */
     public void spin(){
-        if(wheels.isEmpty()){
-            fail("No hay ruedas en la maquina.");
+        if(noWheels("No hay ruedas en la maquina.")){
             return;
         }
-        if(symbols.isEmpty()){
-            fail("No hay simbolos registrados en la maquina.");
+        if(noSymbols("No hay simbolos registrados en la maquina.")){
             return;
         }
         for (int i = 0; i < wheels.size(); i++){
             wheels.get(i).spin();
         }
         updateJackpotVisual();
-        ok = true;        
+        ok = true;         
     }
+    
     /**
      * Este Spin gira una rueda especifica con un numero determinado de pasos
      * por cada paso se elige un simbolo al azar
@@ -358,27 +395,19 @@ public class Slotmachine
      * @param steps numero de pasos a girar
      */
     public void spin(int wheel, int steps) {
-       if(wheels.isEmpty()) {
-            fail("No hay ruedas en la maquina");
+       if(noWheels("No hay ruedas en la maquina")){
             return;
         } 
-       if(symbols.isEmpty()){
-           fail("No hay simbolos registrados en la maquina");
-           return;
+       if(noSymbols("No hay simbolos registrados en la maquina")){
+            return;
         } 
-       if(wheel < 1){
-            wheel = 1;
-        }
-       if(wheel > wheels.size()){
-           wheel = wheels.size(); 
-        }
+       wheel = clamp(wheel);
        if(steps < 1){
            fail("El numero de pasos debe ser al menos 1");
            return;
         }
        Wheel target = wheels.get(wheel -1);
-       if(target.isLocked()){
-            fail("No se puede girar si esta bloqueada la rueda");
+       if(blocked(target, "No se puede girar si esta bloqueada la rueda")){
             return;
         }
        for(int i = 0; i < steps; i++){
@@ -398,12 +427,10 @@ public class Slotmachine
      * @param setSymbols arreglo del color que deberia mostrar
      */
     public void spin(String[] setSymbols){
-        if(wheels.isEmpty()){
-            fail("No hay ruedas en la maquina");
+        if(noWheels("No hay ruedas en la maquina")){
             return;
         }
-        if(symbols.isEmpty()){
-            fail("No hay simbolos registrados de momento en la maquina");
+        if(noSymbols("No hay simbolos registrados de momento en la maquina")){
             return;
         }
         if(setSymbols.length != wheels.size()){
@@ -496,35 +523,26 @@ public class Slotmachine
      * @param wheel2 posición de la segunda rueda
      */
     public void swap(int wheel1, int wheel2) {
-        if (wheels.isEmpty()) {
-            fail("No hay ruedas en la maquina.");
+        if (noWheels("No hay ruedas en la maquina.")) {
             return;
         }
         if (wheel1 < 1 || wheel1 > wheels.size() || wheel2 < 1 || wheel2 > wheels.size()) {
             fail("Posición de rueda inválida para el intercambio.");
             return;
         }
-        
         Wheel w1 = wheels.get(wheel1 - 1);
         Wheel w2 = wheels.get(wheel2 - 1);
-
-        if (w1.isLocked()) {
-            fail("No se puede rotar puesto que la rueda " + wheel1 + " esta bloqueada, desbloqueala");
+        if (blocked(w1, "No se puede rotar puesto que la rueda " + wheel1 + " esta bloqueada, desbloqueala")) {
             return;
         }
-        if (w2.isLocked()) {
-            fail("No se puede rotar puesto que la rueda " + wheel2 + " esta bloqueada, desbloqueala");
+        if (blocked(w2, "No se puede rotar puesto que la rueda " + wheel2 + " esta bloqueada, desbloqueala")) {
             return;
         }
-
         // Intercambiar en la lista
         wheels.set(wheel1 - 1, w2);
         wheels.set(wheel2 - 1, w1);
-
         // Actualizar posiciones visuales y lógicas
-        for (int i = 0; i < wheels.size(); i++) {
-            wheels.get(i).setPosition(i + 1);
-        }
+        renumber();
         updateBackground();
         ok = true;
     }
@@ -534,16 +552,10 @@ public class Slotmachine
      * @param wheel posición de la rueda a bloquear
      */
     public void lock(int wheel) {
-        if (wheels.isEmpty()) {
-            fail("No hay ruedas en la maquina.");
+         if (noWheels("No hay ruedas en la maquina.")) {
             return;
         }
-        if (wheel < 1) {
-            wheel = 1;
-        }
-        if (wheel > wheels.size()) {
-            wheel = wheels.size();
-        }
+        wheel = clamp(wheel);
         wheels.get(wheel - 1).lock();
         ok = true;
     }
@@ -553,16 +565,10 @@ public class Slotmachine
      * @param wheel posición de la rueda a desbloquear
      */
     public void unlock(int wheel) {
-        if (wheels.isEmpty()) {
-            fail("No hay ruedas en la maquina.");
+        if (noWheels("No hay ruedas en la maquina.")) {
             return;
         }
-        if (wheel < 1) {
-            wheel = 1;
-        }
-        if (wheel > wheels.size()) {
-            wheel = wheels.size();
-        }
+        wheel = clamp(wheel);
         wheels.get(wheel - 1).unlock();
         ok = true;
     }
