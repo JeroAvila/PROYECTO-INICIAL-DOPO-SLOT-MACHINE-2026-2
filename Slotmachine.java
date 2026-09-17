@@ -1,20 +1,41 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.swing.JOptionPane;
 
 /**
  * Simula una maquina tragamonedas 
  * @author Laura Juliana Parra Velandia
  * @author Thomas Jeronimo Avila Castillo
- * @version 2.0
+ * @version 1.0
  */
 public class Slotmachine
 {
+    /**
+     * Colores validos para los simbolos (blanco, gris y amarillo estan
+     * reservados para el fondo/jackpot de las ruedas, no van aqui).
+     * Se usa tanto para validar addSymbol como para generar los
+     * simbolos de SlotMachine(n).
+     */
+    private static final String[] VALID_SYMBOL_COLORS = {
+        "red", "black", "blue", "green", "magenta", "orange", "purple", "pink",
+        "brown", "cyan", "lime", "navy", "teal", "gold", "maroon", "olive",
+        "indigo", "violet", "turquoise", "coral", "salmon", "silver",
+        "crimson", "chocolate", "darkblue", "darkgreen", "darkorange", "darkred",
+        "darkviolet", "deeppink", "deepskyblue", "dodgerblue", "firebrick",
+        "forestgreen", "hotpink", "indianred", "khaki", "lavender", "lightblue",
+        "lightgreen", "lightpink", "limegreen", "mediumblue", "mediumpurple",
+        "mediumseagreen", "midnightblue", "orchid", "peru", "plum", "royalblue",
+        "saddlebrown", "seagreen", "sienna", "skyblue", "slateblue",
+        "springgreen", "tan", "tomato", "wheat"
+    };
+
     private List<Wheel> wheels;
     private List<String> symbols;
     private boolean ok;
     private boolean visible;
     private Rectangle background;
+    private Random random;
 
     /**
      * CONSTRUCTOR
@@ -26,11 +47,39 @@ public class Slotmachine
         symbols = new ArrayList <>();
         ok = true;
         visible = false;
+        random = new Random();
         background = new Rectangle();
         background.changeColor("black");
         background.moveHorizontal(10 - 70); // posicion por defecto de Rectangle es (70,15)
         background.moveVertical(10 - 15);
         updateBackground();
+    }
+
+    /**
+     * Crea una maquina con n ruedas y n simbolos, todos inicializados automaticamente: los n primeros colores validadados del
+     * se registran como catalogo, se crean n ruedas y cada una arranca mostrando un simbolo aleatorio de ese catalogo.
+     * Si n es menor a 3 se usa 3, y si es mayor al numero de colores disponibles se usa ese maximo.
+     * @param n cantidad de ruedas y de simbolos a crear
+     */
+    public Slotmachine(int n)
+    {
+        this();
+        if(n < 3){
+            n = 3;
+        }
+        if(n > VALID_SYMBOL_COLORS.length){
+            n = VALID_SYMBOL_COLORS.length;
+        }
+        for(int i = 1; i <= n; i++){
+            addSymbol(i, VALID_SYMBOL_COLORS[i - 1]);
+        }
+        for(int i = 1; i <= n; i++){
+            addWheel(i);
+        }
+        for(int i = 1; i <= n; i++){
+            spin(i);
+        }
+        ok = true;
     }
 
     /**
@@ -106,14 +155,13 @@ public class Slotmachine
      * @param color color del símbolo
      */
     public void addSymbol(int pos, String color){
-        if(!(color.equals("red") || color.equals("black") || color.equals("blue")
-            || color.equals("green") || color.equals("magenta")
-            || color.equals("orange") || color.equals("purple") || color.equals("pink")
-            || color.equals("brown") || color.equals("cyan")
-            || color.equals("lime") || color.equals("navy") || color.equals("teal")
-            || color.equals("gold") || color.equals("maroon") || color.equals("olive")
-            || color.equals("indigo") || color.equals("violet") || color.equals("turquoise")
-            || color.equals("coral") || color.equals("salmon") || color.equals("silver"))){
+        boolean isValidColor = false;
+        for(int i = 0; i < VALID_SYMBOL_COLORS.length; i++){
+            if(VALID_SYMBOL_COLORS[i].equals(color)){
+                isValidColor = true;
+            }
+        }
+        if(!isValidColor){
             fail("El color '" + color + "' no es un color valido.");
             return;
         }
@@ -153,7 +201,7 @@ public class Slotmachine
             return;
         }
         symbols.remove(symbol);
-        updateWheelSymbols();
+        updateWheelSymbols(); // modificado para la configuracion
         ok = true;
     }
     
@@ -303,7 +351,6 @@ public class Slotmachine
         updateJackpotVisual();
         ok = true;        
     }
-    
     /**
      * Este Spin gira una rueda especifica con un numero determinado de pasos
      * por cada paso se elige un simbolo al azar
@@ -457,8 +504,10 @@ public class Slotmachine
             fail("Posición de rueda inválida para el intercambio.");
             return;
         }
+        
         Wheel w1 = wheels.get(wheel1 - 1);
         Wheel w2 = wheels.get(wheel2 - 1);
+
         if (w1.isLocked()) {
             fail("No se puede rotar puesto que la rueda " + wheel1 + " esta bloqueada, desbloqueala");
             return;
@@ -467,8 +516,12 @@ public class Slotmachine
             fail("No se puede rotar puesto que la rueda " + wheel2 + " esta bloqueada, desbloqueala");
             return;
         }
+
+        // Intercambiar en la lista
         wheels.set(wheel1 - 1, w2);
         wheels.set(wheel2 - 1, w1);
+
+        // Actualizar posiciones visuales y lógicas
         for (int i = 0; i < wheels.size(); i++) {
             wheels.get(i).setPosition(i + 1);
         }

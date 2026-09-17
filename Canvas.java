@@ -164,6 +164,80 @@ public class Canvas{
             graphic.setColor(Color.decode("#FA8072"));
         else if(colorString.equals("silver"))
             graphic.setColor(Color.decode("#C0C0C0"));
+        else if(colorString.equals("crimson"))
+            graphic.setColor(Color.decode("#DC143C"));
+        else if(colorString.equals("chocolate"))
+            graphic.setColor(Color.decode("#D2691E"));
+        else if(colorString.equals("darkblue"))
+            graphic.setColor(Color.decode("#00008B"));
+        else if(colorString.equals("darkgreen"))
+            graphic.setColor(Color.decode("#006400"));
+        else if(colorString.equals("darkorange"))
+            graphic.setColor(Color.decode("#FF8C00"));
+        else if(colorString.equals("darkred"))
+            graphic.setColor(Color.decode("#8B0000"));
+        else if(colorString.equals("darkviolet"))
+            graphic.setColor(Color.decode("#9400D3"));
+        else if(colorString.equals("deeppink"))
+            graphic.setColor(Color.decode("#FF1493"));
+        else if(colorString.equals("deepskyblue"))
+            graphic.setColor(Color.decode("#00BFFF"));
+        else if(colorString.equals("dodgerblue"))
+            graphic.setColor(Color.decode("#1E90FF"));
+        else if(colorString.equals("firebrick"))
+            graphic.setColor(Color.decode("#B22222"));
+        else if(colorString.equals("forestgreen"))
+            graphic.setColor(Color.decode("#228B22"));
+        else if(colorString.equals("hotpink"))
+            graphic.setColor(Color.decode("#FF69B4"));
+        else if(colorString.equals("indianred"))
+            graphic.setColor(Color.decode("#CD5C5C"));
+        else if(colorString.equals("khaki"))
+            graphic.setColor(Color.decode("#F0E68C"));
+        else if(colorString.equals("lavender"))
+            graphic.setColor(Color.decode("#E6E6FA"));
+        else if(colorString.equals("lightblue"))
+            graphic.setColor(Color.decode("#ADD8E6"));
+        else if(colorString.equals("lightgreen"))
+            graphic.setColor(Color.decode("#90EE90"));
+        else if(colorString.equals("lightpink"))
+            graphic.setColor(Color.decode("#FFB6C1"));
+        else if(colorString.equals("limegreen"))
+            graphic.setColor(Color.decode("#32CD32"));
+        else if(colorString.equals("mediumblue"))
+            graphic.setColor(Color.decode("#0000CD"));
+        else if(colorString.equals("mediumpurple"))
+            graphic.setColor(Color.decode("#9370DB"));
+        else if(colorString.equals("mediumseagreen"))
+            graphic.setColor(Color.decode("#3CB371"));
+        else if(colorString.equals("midnightblue"))
+            graphic.setColor(Color.decode("#191970"));
+        else if(colorString.equals("orchid"))
+            graphic.setColor(Color.decode("#DA70D6"));
+        else if(colorString.equals("peru"))
+            graphic.setColor(Color.decode("#CD853F"));
+        else if(colorString.equals("plum"))
+            graphic.setColor(Color.decode("#DDA0DD"));
+        else if(colorString.equals("royalblue"))
+            graphic.setColor(Color.decode("#4169E1"));
+        else if(colorString.equals("saddlebrown"))
+            graphic.setColor(Color.decode("#8B4513"));
+        else if(colorString.equals("seagreen"))
+            graphic.setColor(Color.decode("#2E8B57"));
+        else if(colorString.equals("sienna"))
+            graphic.setColor(Color.decode("#A0522D"));
+        else if(colorString.equals("skyblue"))
+            graphic.setColor(Color.decode("#87CEEB"));
+        else if(colorString.equals("slateblue"))
+            graphic.setColor(Color.decode("#6A5ACD"));
+        else if(colorString.equals("springgreen"))
+            graphic.setColor(Color.decode("#00FF7F"));
+        else if(colorString.equals("tan"))
+            graphic.setColor(Color.decode("#D2B48C"));
+        else if(colorString.equals("tomato"))
+            graphic.setColor(Color.decode("#FF6347"));
+        else if(colorString.equals("wheat"))
+            graphic.setColor(Color.decode("#F5DEB3"));
         else
             graphic.setColor(Color.black);
     }
