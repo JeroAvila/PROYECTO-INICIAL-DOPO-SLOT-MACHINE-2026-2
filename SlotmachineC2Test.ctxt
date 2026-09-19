@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sun Sep 13 12:34:07 COT 2026
+#Sat Sep 19 16:14:29 COT 2026
 comment0.target=SlotmachineC2Test
 comment0.text=\r\n Tests de Slotmachine para el ciclo 2, cubriendo\:\r\n swap(wheel1, wheel2), lock(wheel), unlock(wheel),\r\n spin(wheel, steps) y spin(String[] setSymbols).\r\n\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n @version 1.0\r\n
 comment1.target=void setUp()
