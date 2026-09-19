@@ -77,7 +77,7 @@ public class SlotMachineContest {
     
     /**
      * Lleva cada rueda al simbolo de la rueda 1.
-     * @param order orden de las ruedas obtenido en findOrder(int n)
+     * @param order orden de las ruedas obtenido en 
      * @param n cantidad de ruedas
      */
     private void align(ArrayList<Integer> order, int n) {
