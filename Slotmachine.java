@@ -29,7 +29,7 @@ public class Slotmachine
         "saddlebrown", "seagreen", "sienna", "skyblue", "slateblue",
         "springgreen", "tan", "tomato", "wheat"
     };
-
+    private static final int CASCADE_DELAY = 2000;
     private List<Wheel> wheels;
     private List<String> symbols;
     private boolean ok;
@@ -383,6 +383,9 @@ public class Slotmachine
         }
         for (int i = 0; i < wheels.size(); i++){
             wheels.get(i).spin();
+            if(visible && i < wheels.size() -1){
+                Canvas.getCanvas().wait(CASCADE_DELAY);// partedecascadadelay
+            }
         }
         updateJackpotVisual();
         ok = true;         
