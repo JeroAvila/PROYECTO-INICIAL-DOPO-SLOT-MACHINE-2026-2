@@ -75,6 +75,7 @@ public class Wheel
         }
         updateColor();
     }
+    
     /**
      * devuelve el color del simbolo que se esta mostrando actualmente.
      * si la rueda no tiene simbolo asignado da null

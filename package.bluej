@@ -29,10 +29,17 @@ dependency8.type=UsesDependency
 dependency9.from=Slotmachine
 dependency9.to=Canvas
 dependency9.type=UsesDependency
+<<<<<<< HEAD
 editor.fx.0.height=0
 editor.fx.0.width=0
 editor.fx.0.x=0
 editor.fx.0.y=0
+=======
+editor.fx.0.height=739
+editor.fx.0.width=816
+editor.fx.0.x=275
+editor.fx.0.y=-6
+>>>>>>> 478d13aa6023a3d25af8d710b823f388493ab79b
 objectbench.height=95
 objectbench.width=1010
 package.divider.horizontal=0.5352631578947369
