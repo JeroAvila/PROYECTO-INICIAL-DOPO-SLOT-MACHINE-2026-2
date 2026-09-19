@@ -21,6 +21,10 @@ public class Wheel
     private int frameX, frameY; // posicion actual del frame en pantalla
     private int symX, symY;     // posicion actual del circulo del simbolo
     private Random random;
+    private Rectangle lockMark;
+    private Rectangle activeMark;
+    private int lockX, lockY; //posiciom de marcador de bloqueado
+    private int activeX, activeY; //posicion del marcador de turno
     /**
      * CONSTRUCTOR
      * Crea una rueda vacia en la posicion dada. for objects of class Wheel
@@ -38,6 +42,19 @@ public class Wheel
         frameX = 70; frameY = 15;   
         symX = 20; symY = 15;       
         random = new Random();
+        //cuadro que indica esta bloqueado
+        lockMark = new Rectangle();
+        lockMark.changeSize(10, 10);
+        lockMark.changeColor("red");
+        lockX = 70;
+        lockY = 15;
+        
+        // cuadro que indica en que posicion se esta haciendo el movimiento
+        activeMark = new Rectangle();
+        activeMark.changeSize(8, 8);
+        activeMark.changeColor("green");
+        activeX = 70;
+        activeY = 15;
         updatePosition();
     }
     
@@ -134,6 +151,7 @@ public class Wheel
         if(getCurrentSymbol() != null){
             symbolShape.makeVisible();
         }
+        updateLockMark();
     }
     
     /**
@@ -143,6 +161,8 @@ public class Wheel
         visible = false;
         frame.makeInvisible();
         symbolShape.makeInvisible();
+        lockMark.makeInvisible();
+        activeMark.makeInvisible();
     }
     
     /**
@@ -153,6 +173,8 @@ public class Wheel
     public void bringToFront(){
         frame.moveHorizontal(0);
         symbolShape.moveHorizontal(0);
+        lockMark.moveHorizontal(0);
+        activeMark.moveHorizontal(0);
     }
     
     /**
@@ -191,17 +213,49 @@ public class Wheel
         symbolShape.moveVertical(targetSymY - symY);
         symX = targetSymX;
         symY = targetSymY;
+        
+        int targetLockX = targetFrameX + 15;
+        int targetLockY = targetFrameY - 14;
+        lockMark.moveHorizontal(targetLockX - lockX );
+        lockMark.moveVertical(targetLockY - lockY);
+        lockX = targetLockX;
+        lockY = targetLockY;
+        
+        int targetActiveX = targetFrameX + 16;
+        int targetActiveY = targetFrameY + 34;
+        activeMark.moveHorizontal(targetActiveX - activeX);
+        activeMark.moveVertical(targetActiveY - activeY);
+        activeX = targetActiveX;
+        activeY = targetActiveY;
     }
     
     public void lock(){
         locked = true;
+        updateLockMark();
     }
     
     public void unlock(){
         locked = false;
+        updateLockMark();
     }
-    
+    /**
+     * actualiza la posicion del bloqueo de una rueda
+     */
+    private void updateLockMark(){
+        if (locked && visible){
+            lockMark.makeVisible();
+        } else {
+            lockMark.makeInvisible();
+        }
+    }
     public boolean isLocked(){
         return locked;
+    }
+    public void markActive(boolean active){
+        if (active && visible){
+            activeMark.makeVisible();
+        } else {
+            activeMark.makeInvisible();
+        }
     }
 }

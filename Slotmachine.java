@@ -382,10 +382,13 @@ public class Slotmachine
             return;
         }
         for (int i = 0; i < wheels.size(); i++){
-            wheels.get(i).spin();
-            if(visible && i < wheels.size() -1){
+            Wheel current = wheels.get(i);
+            current.markActive(true);
+            current.spin();
+            if(visible){
                 Canvas.getCanvas().wait(CASCADE_DELAY);// partedecascadadelay
             }
+            current.markActive(false);
         }
         updateJackpotVisual();
         ok = true;         
