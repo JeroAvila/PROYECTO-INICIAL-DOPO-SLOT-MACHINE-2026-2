@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sat Sep 19 18:47:10 COT 2026
+#Sat Sep 19 20:13:46 COT 2026
 comment0.target=SlotmachineTest
 comment0.text=\r\n Tests de Slotmachine, cubriendo unicamente los metodos del ciclo 1\:\r\n addWheel, delWheel, addSymbol, delSymbol, placeSymbol, spin(wheel),\r\n spin(), symbols(), distinctSymbolos(), configuracion(), isJackpot(),\r\n makeVisible(), makeInvisible(), exit(), ok().\r\n\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n @version 1.0\r\n
 comment1.target=void setUp()
