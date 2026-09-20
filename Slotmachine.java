@@ -29,7 +29,7 @@ public class Slotmachine
         "saddlebrown", "seagreen", "sienna", "skyblue", "slateblue",
         "springgreen", "tan", "tomato", "wheat"
     };
-
+    private static final int CASCADE_DELAY = 2000;
     private List<Wheel> wheels;
     private List<String> symbols;
     private boolean ok;
@@ -105,7 +105,17 @@ public class Slotmachine
         }
         ok = true;
     }
-    
+    public void addWheels(int n){
+        if(n < 1){
+            fail("la cantidad de ruedas debe ser al menos 1");
+            return;
+        }
+        for(int i = 0; i < n; i++){
+            addWheel(wheels.size() + 1);
+        }
+        ok = true;
+    }
+        
     /**
      * Eliminar la rueda que esta en la posicion dada, desplazando las
      * demas ruedas. Si la maquina no tiene ruedas la operacion falla.
@@ -382,7 +392,13 @@ public class Slotmachine
             return;
         }
         for (int i = 0; i < wheels.size(); i++){
-            wheels.get(i).spin();
+            Wheel current = wheels.get(i);
+            current.markActive(true);
+            current.spin();
+            if(visible){
+                Canvas.getCanvas().wait(CASCADE_DELAY);// partedecascadadelay
+            }
+            current.markActive(false);
         }
         updateJackpotVisual();
         ok = true;         

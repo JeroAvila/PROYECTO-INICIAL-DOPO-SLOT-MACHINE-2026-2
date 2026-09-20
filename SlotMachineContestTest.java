@@ -5,7 +5,8 @@ import static org.junit.Assert.*;
  * Pruebas de SlotMachineContest.
  */
 public class SlotMachineContestTest {
-
+    private static final int ACTION_LIMIT = 10000;
+    
     /**
      * Prueba principal del ciclo: solve debe dejar la maquina en jackpot
      * sin importar cuantas ruedas tenga.
@@ -145,5 +146,54 @@ public class SlotMachineContestTest {
         Slotmachine first = contest.machine();
         contest.solve(5);
         assertNotSame(first, contest.machine());
+    }
+    /**
+     * Prueba de aceptacion
+     * escerario. el usuario pide resolver maquinas de varios sizes
+     * desde la mas pequeña hasta la mas grande en todos los casos
+     * debe dar jackpot
+     */
+    @Test
+    public void shouldSolveMachineOfEverySize(){
+        int[] sizes = {3, 4, 5, 10, 25, 50};
+        
+        for (int i = 0; i < sizes.length; i++){
+            SlotMachineContest contest = new SlotMachineContest();
+            int actions = contest.solve(sizes[i]);
+            
+            assertTrue("No gano con n=" + sizes[i], contest.isJackpot());
+            assertTrue("Se paso del limite con n=" + sizes[i], 
+                actions <= ACTION_LIMIT);
+            assertEquals(sizes[i], contest.configuration().length);
+        }
+    }
+    /**
+     * prueba de aceptacion gana siempre no por suerte
+     * escenario. la maquina se inicia al azar, si se gana no demuestra nada
+     * posible casualidad, para eso se hacen 30 maquinas del mismo size
+     * y se exige ganar todas y se registra la peor partida con costo de las
+     * acciones.
+     */
+    @Test
+    public void shouldWinEveryTimeAndNotByLuck(){
+        int attempts = 30;
+        int wins = 0;
+        int worstCase = 0;
+        
+        for (int i = 0; i < attempts; i++){
+            SlotMachineContest contest = new SlotMachineContest();
+            int actions = contest.solve(8);
+            if(contest.isJackpot()){
+                wins++;
+            }
+            if(actions > worstCase){
+                worstCase = actions;
+            }
+        }
+        assertEquals("Perdio" + (attempts - wins) + " de " + attempts,
+            attempts, wins);
+        assertTrue("La peor partida uso " + worstCase + "acciones",
+            worstCase <= ACTION_LIMIT);
+            
     }
 }
