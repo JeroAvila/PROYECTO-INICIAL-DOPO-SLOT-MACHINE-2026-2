@@ -16,11 +16,10 @@ public class SlotMachineContestTest {
      */
     @Test
     public void shouldWinAllN() {
-        SlotMachineContest contest = new SlotMachineContest();
         for(int n = 3; n <= 59; n++){
             for(int rep = 0; rep < 3; rep++){
-                contest.solve(n);
-                assertTrue(contest.isJackpot());
+                SlotMachineContest.solve(n);
+                assertTrue(SlotMachineContest.isJackpot());
             }
         }
     }
@@ -35,39 +34,35 @@ public class SlotMachineContestTest {
      */
     @Test
     public void shouldNotExceedLimit() {
-        SlotMachineContest contest = new SlotMachineContest();
         for(int n = 3; n <= 59; n++){
             for(int rep = 0; rep < 3; rep++){
-                int queries = contest.solve(n);
-                assertTrue(queries <= 3 * n * n);
+                int[][] actions = SlotMachineContest.solve(n);
+                assertTrue(actions.length <= 3 * n * n);
             }
         }
     }
 
     @Test
     public void shouldWinMin() {
-        SlotMachineContest contest = new SlotMachineContest();
         for(int rep = 0; rep < 100; rep++){
-            contest.solve(3);
-            assertTrue(contest.isJackpot());
+            SlotMachineContest.solve(3);
+            assertTrue(SlotMachineContest.isJackpot());
         }
     }
 
     @Test
     public void shouldWinAnyStart() {
-        SlotMachineContest contest = new SlotMachineContest();
         for(int rep = 0; rep < 100; rep++){
-            contest.solve(4);
-            assertTrue(contest.isJackpot());
+            SlotMachineContest.solve(4);
+            assertTrue(SlotMachineContest.isJackpot());
         }
     }
 
     @Test
     public void shouldShowCatalogColor() {
-        SlotMachineContest contest = new SlotMachineContest();
-        contest.solve(6);
-        String shown = contest.configuration()[0];
-        String[] catalog = contest.machine().symbols();
+        SlotMachineContest.solve(6);
+        String shown = SlotMachineContest.configuration()[0];
+        String[] catalog = SlotMachineContest.machine().symbols();
         boolean found = false;
         for(int i = 0; i < catalog.length; i++){
             if(catalog[i].equals(shown)){
@@ -79,37 +74,33 @@ public class SlotMachineContestTest {
 
     @Test
     public void shouldUseMin() {
-        SlotMachineContest contest = new SlotMachineContest();
-        contest.solve(1);
-        assertEquals(3, contest.configuration().length);
-        assertTrue(contest.isJackpot());
-        contest.solve(-5);
-        assertEquals(3, contest.configuration().length);
-        assertTrue(contest.isJackpot());
+        SlotMachineContest.solve(1);
+        assertEquals(3, SlotMachineContest.configuration().length);
+        assertTrue(SlotMachineContest.isJackpot());
+        SlotMachineContest.solve(-5);
+        assertEquals(3, SlotMachineContest.configuration().length);
+        assertTrue(SlotMachineContest.isJackpot());
     }
 
     @Test
     public void shouldUseMax() {
-        SlotMachineContest contest = new SlotMachineContest();
-        contest.solve(100);
-        assertEquals(59, contest.configuration().length);
-        assertTrue(contest.isJackpot());
+        SlotMachineContest.solve(100);
+        assertEquals(59, SlotMachineContest.configuration().length);
+        assertTrue(SlotMachineContest.isJackpot());
     }
 
     @Test
     public void shouldSolveTwice() {
-        SlotMachineContest contest = new SlotMachineContest();
-        contest.solve(5);
-        contest.solve(7);
-        assertEquals(7, contest.configuration().length);
-        assertTrue(contest.isJackpot());
+        SlotMachineContest.solve(5);
+        SlotMachineContest.solve(7);
+        assertEquals(7, SlotMachineContest.configuration().length);
+        assertTrue(SlotMachineContest.isJackpot());
     }
 
     @Test
     public void shouldNotMixColors() {
-        SlotMachineContest contest = new SlotMachineContest();
-        contest.solve(8);
-        String[] config = contest.configuration();
+        SlotMachineContest.solve(8);
+        String[] config = SlotMachineContest.configuration();
         assertNotNull(config[0]);
         for(int i = 1; i < config.length; i++){
             assertEquals(config[0], config[i]);
@@ -118,35 +109,32 @@ public class SlotMachineContestTest {
 
     @Test
     public void shouldNotLoseWheels() {
-        SlotMachineContest contest = new SlotMachineContest();
-        contest.solve(6);
-        assertEquals(6, contest.configuration().length);
+        SlotMachineContest.solve(6);
+        assertEquals(6, SlotMachineContest.configuration().length);
     }
 
     @Test
     public void shouldNotLoseSymbols() {
-        SlotMachineContest contest = new SlotMachineContest();
-        contest.solve(6);
-        assertEquals(6, contest.machine().symbols().length);
+        SlotMachineContest.solve(6);
+        assertEquals(6, SlotMachineContest.machine().symbols().length);
     }
 
     @Test
     public void shouldNotFail() {
-        SlotMachineContest contest = new SlotMachineContest();
         for(int n = 3; n <= 59; n++){
-            contest.solve(n);
-            assertTrue(contest.machine().ok());
+            SlotMachineContest.solve(n);
+            assertTrue(SlotMachineContest.machine().ok());
         }
     }
 
     @Test
     public void shouldNotReuseMachine() {
-        SlotMachineContest contest = new SlotMachineContest();
-        contest.solve(5);
-        Slotmachine first = contest.machine();
-        contest.solve(5);
-        assertNotSame(first, contest.machine());
+        SlotMachineContest.solve(5);
+        Slotmachine first = SlotMachineContest.machine();
+        SlotMachineContest.solve(5);
+        assertNotSame(first, SlotMachineContest.machine());
     }
+    
     /**
      * Prueba de aceptacion
      * escerario. el usuario pide resolver maquinas de varios sizes
@@ -158,15 +146,15 @@ public class SlotMachineContestTest {
         int[] sizes = {3, 4, 5, 10, 25, 50};
         
         for (int i = 0; i < sizes.length; i++){
-            SlotMachineContest contest = new SlotMachineContest();
-            int actions = contest.solve(sizes[i]);
+            int[][] actions = SlotMachineContest.solve(sizes[i]);
             
-            assertTrue("No gano con n=" + sizes[i], contest.isJackpot());
+            assertTrue("No gano con n=" + sizes[i], SlotMachineContest.isJackpot());
             assertTrue("Se paso del limite con n=" + sizes[i], 
-                actions <= ACTION_LIMIT);
-            assertEquals(sizes[i], contest.configuration().length);
+                actions.length <= ACTION_LIMIT);
+            assertEquals(sizes[i], SlotMachineContest.configuration().length);
         }
     }
+    
     /**
      * prueba de aceptacion gana siempre no por suerte
      * escenario. la maquina se inicia al azar, si se gana no demuestra nada
@@ -181,13 +169,12 @@ public class SlotMachineContestTest {
         int worstCase = 0;
         
         for (int i = 0; i < attempts; i++){
-            SlotMachineContest contest = new SlotMachineContest();
-            int actions = contest.solve(8);
-            if(contest.isJackpot()){
+            int[][] actions = SlotMachineContest.solve(8);
+            if(SlotMachineContest.isJackpot()){
                 wins++;
             }
-            if(actions > worstCase){
-                worstCase = actions;
+            if(actions.length > worstCase){
+                worstCase = actions.length;
             }
         }
         assertEquals("Perdio" + (attempts - wins) + " de " + attempts,
