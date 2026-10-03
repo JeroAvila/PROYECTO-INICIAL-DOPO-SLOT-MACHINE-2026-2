@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 /**
  * Es la representacion de una rueda en la maquina tragamonedas
@@ -12,14 +11,13 @@ public class Wheel
 {
     private int position;
     private Rectangle frame;
-    private Circle symbolShape;
-    private List<String> symbols; 
+    private ArrayList<Symbol> symbols; 
     private int currentIndex;  
     private boolean winning;  
     private boolean visible;
     private boolean locked;
     private int frameX, frameY; // posicion actual del frame en pantalla
-    private int symX, symY;     // posicion actual del circulo del simbolo
+    private int symX, symY;     // posicion actual del espacio del simbolo
     private Random random;
     private Rectangle lockMark;
     private Rectangle activeMark;
@@ -34,7 +32,6 @@ public class Wheel
         this.position = position;
         frame = new Rectangle();
         frame.changeColor("gray");
-        symbolShape = new Circle();
         symbols = new ArrayList<>();
         currentIndex = -1; 
         winning = false;
@@ -82,13 +79,22 @@ public class Wheel
      * Si el simbolo que ya estaba visible sigue existiendo en la lista
      * nueva, se mantiene; si no, la rueda queda sin simbolo asignado.
      */
-    public void setSymbols(List<String> symbols) {
+    public void setSymbols(ArrayList<Symbol> catalog) {
         String previousColor = getCurrentSymbol();
-        this.symbols = new ArrayList<>(symbols);
-        if(previousColor != null && this.symbols.contains(previousColor)){
-            currentIndex = this.symbols.indexOf(previousColor);
-        } else {
-            currentIndex = -1;
+        for(int i = 0; i < symbols.size(); i++){
+            symbols.get(i).makeInvisible();
+        }
+        symbols = new ArrayList<>();
+        for(int i = 0; i < catalog.size(); i++){
+            Symbol copy = catalog.get(i).copy();
+            copy.setPosition(symX, symY);
+            symbols.add(copy);
+        }
+        currentIndex = -1;
+        for(int i = 0; i < symbols.size(); i++){
+            if(symbols.get(i).getColor().equals(previousColor)){
+                currentIndex = i;
+            }
         }
         updateColor();
     }
@@ -101,7 +107,7 @@ public class Wheel
         if(symbols.isEmpty() || currentIndex == -1){
             return null;
         }
-        return symbols.get(currentIndex);
+        return symbols.get(currentIndex).getColor();
     }
     
     /**
@@ -110,6 +116,7 @@ public class Wheel
     public void spin() {
         if(!locked && !symbols.isEmpty()){
             currentIndex = random.nextInt(symbols.size());
+            symbols.get(currentIndex).select();
             updateColor();
         }
     }
@@ -119,11 +126,17 @@ public class Wheel
      * si lo encuentra mueve el currentIndex a esa posicio para que sea visible el simbolo
      */
     public boolean placeSymbol(String symbol){
-        int index = symbols.indexOf(symbol);
+        int index = -1;
+        for(int i = 0; i < symbols.size(); i++){
+            if(symbols.get(i).getColor().equals(symbol)){
+                index = i;
+            }
+        }
         if (index == -1){
             return false;
         }
         currentIndex = index;
+        symbols.get(currentIndex).select();
         updateColor();
         return true;
     }
@@ -138,7 +151,7 @@ public class Wheel
         this.winning = winning;
         frame.changeColor(winning ? "yellow" : "gray");
         if(visible && getCurrentSymbol() != null){
-            symbolShape.makeVisible(); 
+            symbols.get(currentIndex).makeVisible(); 
         }
     }
     
@@ -149,7 +162,7 @@ public class Wheel
         visible = true;
         frame.makeVisible();
         if(getCurrentSymbol() != null){
-            symbolShape.makeVisible();
+            symbols.get(currentIndex).makeVisible();
         }
         updateLockMark();
     }
@@ -160,7 +173,9 @@ public class Wheel
     public void makeInvisible(){
         visible = false;
         frame.makeInvisible();
-        symbolShape.makeInvisible();
+        for(int i = 0; i < symbols.size(); i++){
+            symbols.get(i).makeInvisible();
+        }
         lockMark.makeInvisible();
         activeMark.makeInvisible();
     }
@@ -172,7 +187,9 @@ public class Wheel
      */
     public void bringToFront(){
         frame.moveHorizontal(0);
-        symbolShape.moveHorizontal(0);
+        if(getCurrentSymbol() != null){
+            symbols.get(currentIndex).bringToFront();
+        }
         lockMark.moveHorizontal(0);
         activeMark.moveHorizontal(0);
     }
@@ -183,14 +200,11 @@ public class Wheel
      * da null), el circulo se oculta.
      */
     private void updateColor(){
-        String color = getCurrentSymbol();
-        if(color != null){
-            symbolShape.changeColor(color);
-            if(visible){
-                symbolShape.makeVisible();
-            }
-        } else {
-            symbolShape.makeInvisible();
+        for(int i = 0; i < symbols.size(); i++){
+            symbols.get(i).makeInvisible();
+        }
+        if(getCurrentSymbol() != null && visible){
+            symbols.get(currentIndex).makeVisible();
         }
     }
     
@@ -209,10 +223,11 @@ public class Wheel
         
         int targetSymX = targetFrameX + 5; 
         int targetSymY = targetFrameY;
-        symbolShape.moveHorizontal(targetSymX - symX);
-        symbolShape.moveVertical(targetSymY - symY);
         symX = targetSymX;
         symY = targetSymY;
+        for(int i = 0; i < symbols.size(); i++){
+            symbols.get(i).setPosition(symX, symY);
+        }
         
         int targetLockX = targetFrameX + 15;
         int targetLockY = targetFrameY - 14;

@@ -31,7 +31,7 @@ public class Slotmachine
     };
     private static final int CASCADE_DELAY = 2000;
     private List<Wheel> wheels;
-    private List<String> symbols;
+    private ArrayList<Symbol> symbols;
     private boolean ok;
     private boolean visible;
     private Rectangle background;
@@ -147,13 +147,23 @@ public class Slotmachine
     }
     
     /**
+     * Agrega un simbolo normal del color indicado en la posicion dada.
+     * @param pos posicion donde se insertara el simbolo
+     * @param color color del simbolo
+     */
+    public void addSymbol(int pos, String color){
+        addSymbol(pos, color, "normal");
+    }
+    
+    /**
      * Agregar un símbolo del color indicado en la posición dada
      * El color debe ser válido y no repetirse. Si la posición es menor que 1, se usa 1,
      * si supera el número de símbolos más uno, se usa ese máximo.
      * @param pos posición donde se insertará el símbolo 
      * @param color color del símbolo
+     * @param type tipo de simbolo: "normal" o "ephemeral"
      */
-    public void addSymbol(int pos, String color){
+    public void addSymbol(int pos, String color, String type){
         boolean isValidColor = false;
         for(int i = 0; i < VALID_SYMBOL_COLORS.length; i++){
             if(VALID_SYMBOL_COLORS[i].equals(color)){
@@ -164,7 +174,7 @@ public class Slotmachine
             fail("El color '" + color + "' no es un color valido.");
             return;
         }
-        if(symbols.contains(color)){
+        if(indexOfColor(color) != -1){
             fail("El color '" + color + "' ya esta registrado. Los simbolos deben ser de colores diferentes.");
             return;
         }
@@ -172,7 +182,16 @@ public class Slotmachine
             fail("La posicion " + pos + " no es valida.");
             return;
         }
-        symbols.add(pos - 1, color);
+        Symbol symbol;
+        if(type.equals("normal")){
+            symbol = new NormalSymbol(color);
+        } else if(type.equals("ephemeral")){
+            symbol = new EphemeralSymbol(color);
+        } else {
+            fail("El tipo '" + type + "' no existe.");
+            return;
+        }
+        symbols.add(pos - 1, symbol);
         updateWheelSymbols();
         ok = true;
     }
@@ -195,11 +214,11 @@ public class Slotmachine
      * @param symbol color del simbolo a eliminar
      */
     public void delSymbol(String symbol){
-        if(!symbols.contains(symbol)){
+        if(indexOfColor(symbol) == -1){
             fail("El color'" + symbol + "' no esta registrado en la maquina.");
             return;
         }
-        symbols.remove(symbol);
+        symbols.remove(indexOfColor(symbol));
         updateWheelSymbols(); // modificado para la configuracion
         ok = true;
     }
@@ -230,9 +249,23 @@ public class Slotmachine
         ok = true;
         String[] result = new String[symbols.size()];
         for (int i = 0; i < symbols.size(); i++){
-            result[i] = symbols.get(i);
+            result[i] = symbols.get(i).getColor();
         }
         return result;
+    }
+    
+    /**
+     * Busca el simbolo del color dado en el catalogo.
+     * @param color color del simbolo a buscar
+     * @return la posicion del simbolo en el catalogo (desde 0), o -1 si no esta
+     */
+    private int indexOfColor(String color){
+        for(int i = 0; i < symbols.size(); i++){
+            if(symbols.get(i).getColor().equals(color)){
+                return i;
+            }
+        }
+        return -1;
     }
     
     /**
@@ -454,7 +487,7 @@ public class Slotmachine
             return;
         }
         for(int i = 0; i < setSymbols.length; i++){
-            if(!symbols.contains(setSymbols[i])){
+            if(indexOfColor(setSymbols[i]) == -1){
                 fail("El color'" + setSymbols[i] + "'no esta registrado");
                 return;            
             }            
