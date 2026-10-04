@@ -1,0 +1,23 @@
+#BlueJ class context
+#Sat Oct 03 16:57:05 COT 2026
+comment0.target=ShySymbol
+comment0.text=\r\n shysimbol o simbolo timido que lo que hace es que es un cuadrado\r\n que alterna entre visible e invisible cuando la rueda lo selecciona\r\n @autor Laura Juliana Velandia\r\n @autor Thomas Jeronimo Avila Castillo\r\n
+comment1.params=color
+comment1.target=ShySymbol(java.lang.String)
+comment1.text=\r\n crea el simbolo timido de un color dado y lo hace visible\r\n @param color es el color del simbolo\r\n
+comment2.target=Symbol copy()
+comment2.text=\r\n retorna un simbolo timido mas con el mismo color y lo hace visible\r\n
+comment3.target=boolean isHidden()
+comment3.text=\r\n retorna si el simbolo esta invisible\r\n
+comment4.target=void select()
+comment4.text=\r\n alterana entre visible y invisible\r\n
+comment5.target=void makeVisible()
+comment5.text=\r\n hace visible\r\n
+comment6.target=void makeInvisible()
+comment6.text=\r\n se hace Invisible\r\n
+comment7.params=x y
+comment7.target=void setPosition(int, int)
+comment7.text=\r\n ubicacion del cuadrado en el espacio\r\n @param x esquina izquierda del espacio\r\n @param y esquina superior del espacio\r\n
+comment8.target=void bringToFront()
+comment8.text=\r\n redibuja el cuadrado al frente\r\n
+numComments=9

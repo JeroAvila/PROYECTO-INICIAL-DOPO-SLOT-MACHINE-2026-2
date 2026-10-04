@@ -87,23 +87,23 @@ public class Slotmachine
      * demas ruedas. Si la posicion es menor a 1 se usa 1, y si es mayor
      * al numero de ruedas mas uno se usa ese maximo. 
      *  @param pos posicion donde se va a insertar la rueda
+     *  @param type tipo de rueda
      */
-    public void addWheel(int pos){
+    public void addWheel(int pos, String type){
         if(pos < 1){
             pos = 1;
         }
         if(pos > wheels.size() + 1){
             pos = wheels.size() + 1;
         }
-        Wheel newWheel = new Wheel(pos);
-        wheels.add(pos -1, newWheel);
-        renumber();
-        updateWheelSymbols(); // modificado para mostrar en configuracion
-        updateBackground();
-        if(visible){
-            newWheel.makeVisible();
+        Wheel newWheel;
+        try{
+        newWheel = createWheel(type, pos);
+        } catch(SlotMachineException e){
+            fail(e.getMessage());
+            return;
         }
-        ok = true;
+        wheels.add(pos -1, newWheel);
     }
     public void addWheels(int n){
         if(n < 1){
@@ -128,6 +128,12 @@ public class Slotmachine
         pos = clamp(pos);
         Wheel targetWheel = wheels.get(pos-1);
         if(blocked(targetWheel, "No se puede elimanar puesto que la rueda" + pos + "esta bloqueada, desbloqueala")){
+            return;
+        }
+        try {
+            targetWheel.checkDeletable();
+        } catch(SlotMachineException e){
+            fail(e.getMessage());
             return;
         }
         wheels.remove(pos-1);
@@ -161,7 +167,7 @@ public class Slotmachine
      * si supera el número de símbolos más uno, se usa ese máximo.
      * @param pos posición donde se insertará el símbolo 
      * @param color color del símbolo
-     * @param type tipo de simbolo: "normal" o "ephemeral"
+     * @param type tipo de simbolo: "normal" o "ephemeral" o "shy"
      */
     public void addSymbol(int pos, String color, String type){
         boolean isValidColor = false;
@@ -183,17 +189,14 @@ public class Slotmachine
             return;
         }
         Symbol symbol;
-        if(type.equals("normal")){
-            symbol = new NormalSymbol(color);
-        } else if(type.equals("ephemeral")){
-            symbol = new EphemeralSymbol(color);
-        } else {
-            fail("El tipo '" + type + "' no existe.");
-            return;
+        try{
+            symbol = createSymbol(type, color);
+        } catch(SlotMachineException e){
+        
+        } catch(SlotMachineException e){
+            fail(e.getMessage());
+            ok = true;
         }
-        symbols.add(pos - 1, symbol);
-        updateWheelSymbols();
-        ok = true;
     }
     
     /**
@@ -620,5 +623,28 @@ public class Slotmachine
         wheel = clamp(wheel);
         wheels.get(wheel - 1).unlock();
         ok = true;
+    }
+    /**
+     * fabrica una rueda de un tipo dado
+     * @param type es el tipo del simbolo
+     * @param color es el color del simbolo
+     * retorna el simbolo creado
+     * @throws SlotMachineException es si el tipo es nulo o no existe
+     */
+    private Symbol createSymbol(String type, String color) throws SlotMachineException{
+        if(type == null){
+            throw new SlotMachineException("el tipo de simbolo no puyede ser nulo");
+        }
+        if(type.equals("normal")){
+            return new NormalWheel(pos);
+        } else if(type.equals("lefty")){
+            return new LeftyWheel(pos);
+        } else if(type.equeals("rebel")){
+            return new RebelWheel(pos);
+        } else if(type.equals("lucky")){
+            return new LazyWheel(pos);{
+        } return new LuckyWheel(pos);
+        }
+        throw new SlotMachineException("El tipo de rueda '" + type + "' no existe.");
     }
 }

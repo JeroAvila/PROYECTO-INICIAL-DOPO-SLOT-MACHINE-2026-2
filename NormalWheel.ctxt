@@ -1,0 +1,10 @@
+#BlueJ class context
+#Sat Oct 03 20:58:23 COT 2026
+comment0.target=NormalWheel
+comment0.text=\r\n rueda normal, gira, se bloquea, se intercambia y se puede eliminar\r\n @author laura Juliana Parra Velandia\r\n @autor Thomas Jeronimo Avila\r\n
+comment1.params=position
+comment1.target=NormalWheel(int)
+comment1.text=\r\n CONSTRUCTOR\r\n crea una rueda normal\r\n @param position posicion logica de la rueda\r\n
+comment2.target=java.lang.String getType()
+comment2.text=\r\n retorna \r\n "normal"\r\n
+numComments=3

@@ -1,19 +1,16 @@
 #BlueJ class context
+#Sat Oct 03 16:57:05 COT 2026
 comment0.target=NormalSymbol
-comment0.text=\r\n\ Simbolo\ normal\:\ un\ triangulo\ del\ color\ del\ simbolo.\r\n\ @author\ Laura\ Juliana\ Parra\ Velandia\r\n\ @author\ Thomas\ Jeronimo\ Avila\ Castillo\r\n\ @version\ 1.0\r\n
+comment0.text=\r\n Simbolo normal\: un triangulo del color del simbolo.\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n @version 1.0\r\n
 comment1.params=color
 comment1.target=NormalSymbol(java.lang.String)
-comment1.text=\r\n\ Crea\ un\ simbolo\ normal\ del\ color\ dado.\r\n\ @param\ color\ color\ del\ simbolo\r\n
-comment2.params=
-comment2.target=Symbol\ copy()
-comment2.text=\r\n\ @return\ un\ simbolo\ normal\ nuevo\ con\ el\ mismo\ color\r\n
-comment3.params=
-comment3.target=void\ makeVisible()
-comment4.params=
-comment4.target=void\ makeInvisible()
-comment5.params=x\ y
-comment5.target=void\ setPosition(int,\ int)
-comment5.text=\r\n\ Ubica\ el\ triangulo\ dentro\ del\ espacio\ de\ 30x30\ dado.\r\n\ @param\ x\ esquina\ izquierda\ del\ espacio\r\n\ @param\ y\ esquina\ superior\ del\ espacio\r\n
-comment6.params=
-comment6.target=void\ bringToFront()
+comment1.text=\r\n Crea un simbolo normal del color dado.\r\n @param color color del simbolo\r\n
+comment2.target=Symbol copy()
+comment2.text=\r\n @return un simbolo normal nuevo con el mismo color\r\n
+comment3.target=void makeVisible()
+comment4.target=void makeInvisible()
+comment5.params=x y
+comment5.target=void setPosition(int, int)
+comment5.text=\r\n Ubica el triangulo dentro del espacio de 30x30 dado.\r\n @param x esquina izquierda del espacio\r\n @param y esquina superior del espacio\r\n
+comment6.target=void bringToFront()
 numComments=7

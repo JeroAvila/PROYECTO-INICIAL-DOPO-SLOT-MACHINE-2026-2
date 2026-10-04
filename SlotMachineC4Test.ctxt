@@ -1,22 +1,17 @@
 #BlueJ class context
+#Sat Oct 03 16:57:05 COT 2026
 comment0.target=SlotMachineC4Test
-comment0.text=\r\n\ Pruebas\ del\ ciclo\ 4\:\ tipos\ de\ simbolos\ y\ de\ ruedas.\r\n
-comment1.params=
-comment1.target=void\ shouldShrinkEphemeralSymbol()
-comment1.text=\r\n\ Prueba\ del\ simbolo\ efimero\:\ se\ encoge\ un\ paso\ cada\ vez\ que\ se\ selecciona.\r\n\ Escenario\:\ un\ simbolo\ efimero\ nuevo\ se\ selecciona\ dos\ veces.\r\n\ Resultado\ esperado\:\ parte\ en\ 30\ y\ baja\ a\ 25\ y\ luego\ a\ 20.\r\n
-comment2.params=
-comment2.target=void\ shouldStopEphemeralAtDot()
-comment2.text=\r\n\ Prueba\ del\ limite\ del\ simbolo\ efimero\:\ nunca\ desaparece\ del\ todo.\r\n\ Escenario\:\ un\ simbolo\ efimero\ se\ selecciona\ muchas\ mas\ veces\ de\ las\ necesarias.\r\n\ Resultado\ esperado\:\ queda\ en\ 2,\ el\ tamano\ de\ un\ punto,\ y\ no\ baja\ mas.\r\n
-comment3.params=
-comment3.target=void\ shouldCopyEphemeralWithFullSize()
-comment3.text=\r\n\ Prueba\ de\ la\ copia\:\ cada\ rueda\ trabaja\ con\ su\ propia\ copia\ del\ simbolo.\r\n\ Escenario\:\ se\ encoge\ un\ simbolo\ efimero\ y\ luego\ se\ copia.\r\n\ Resultado\ esperado\:\ la\ copia\ es\ otro\ objeto,\ del\ mismo\ color\ y\ con\ el\ tamano\ completo.\r\n
-comment4.params=
-comment4.target=void\ shouldNotAddUnknownSymbolType()
-comment4.text=\r\n\ Prueba\ del\ tipo\ desconocido\ en\ la\ maquina.\r\n\ Escenario\:\ se\ agrega\ un\ simbolo\ con\ un\ tipo\ que\ no\ existe.\r\n\ Resultado\ esperado\:\ la\ operacion\ falla\ y\ el\ simbolo\ no\ se\ registra.\r\n
-comment5.params=
-comment5.target=void\ shouldWinWithEphemeralSymbol()
-comment5.text=\r\n\ Prueba\ del\ simbolo\ efimero\ dentro\ de\ la\ maquina\:\ su\ identidad\ sigue\ siendo\ el\ color.\r\n\ Escenario\:\ dos\ ruedas\ con\ un\ catalogo\ de\ un\ simbolo\ efimero\ y\ uno\ normal;\r\n\ se\ pone\ el\ efimero\ en\ ambas\ ruedas.\r\n\ Resultado\ esperado\:\ la\ configuracion\ muestra\ el\ color\ rojo\ en\ las\ dos\ y\ hay\ jackpot.\r\n
-comment6.params=
-comment6.target=void\ shouldNotRepeatColorWithOtherType()
-comment6.text=\r\n\ Prueba\ de\ que\ el\ catalogo\ no\ repite\ colores\ aunque\ los\ tipos\ sean\ distintos.\r\n\ Escenario\:\ se\ agrega\ un\ simbolo\ normal\ rojo\ y\ luego\ uno\ efimero\ rojo.\r\n\ Resultado\ esperado\:\ el\ segundo\ falla\ y\ el\ catalogo\ queda\ con\ un\ solo\ simbolo.\r\n
+comment0.text=\r\n Pruebas del ciclo 4\: tipos de simbolos y de ruedas.\r\n
+comment1.target=void shouldShrinkEphemeralSymbol()
+comment1.text=\r\n Prueba del simbolo efimero\: se encoge un paso cada vez que se selecciona.\r\n Escenario\: un simbolo efimero nuevo se selecciona dos veces.\r\n Resultado esperado\: parte en 30 y baja a 25 y luego a 20.\r\n
+comment2.target=void shouldStopEphemeralAtDot()
+comment2.text=\r\n Prueba del limite del simbolo efimero\: nunca desaparece del todo.\r\n Escenario\: un simbolo efimero se selecciona muchas mas veces de las necesarias.\r\n Resultado esperado\: queda en 2, el tamano de un punto, y no baja mas.\r\n
+comment3.target=void shouldCopyEphemeralWithFullSize()
+comment3.text=\r\n Prueba de la copia\: cada rueda trabaja con su propia copia del simbolo.\r\n Escenario\: se encoge un simbolo efimero y luego se copia.\r\n Resultado esperado\: la copia es otro objeto, del mismo color y con el tamano completo.\r\n
+comment4.target=void shouldNotAddUnknownSymbolType()
+comment4.text=\r\n Prueba del tipo desconocido en la maquina.\r\n Escenario\: se agrega un simbolo con un tipo que no existe.\r\n Resultado esperado\: la operacion falla y el simbolo no se registra.\r\n
+comment5.target=void shouldWinWithEphemeralSymbol()
+comment5.text=\r\n Prueba del simbolo efimero dentro de la maquina\: su identidad sigue siendo el color.\r\n Escenario\: dos ruedas con un catalogo de un simbolo efimero y uno normal;\r\n se pone el efimero en ambas ruedas.\r\n Resultado esperado\: la configuracion muestra el color rojo en las dos y hay jackpot.\r\n
+comment6.target=void shouldNotRepeatColorWithOtherType()
+comment6.text=\r\n Prueba de que el catalogo no repite colores aunque los tipos sean distintos.\r\n Escenario\: se agrega un simbolo normal rojo y luego uno efimero rojo.\r\n Resultado esperado\: el segundo falla y el catalogo queda con un solo simbolo.\r\n
 numComments=7

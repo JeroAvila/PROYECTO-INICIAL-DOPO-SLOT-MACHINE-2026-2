@@ -1,0 +1,16 @@
+#BlueJ class context
+#Sat Oct 03 21:36:18 COT 2026
+comment0.target=RebelWheel
+comment0.text=\r\n rueda rebelde. no se deja bloquear, ni intercambiar, ni eliminar\r\n no deja hacer nada basicamente\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n
+comment1.params=position
+comment1.target=RebelWheel(int)
+comment1.text=\r\n CONSTRUCTOR\r\n crea una rueda rebelde en una posicion dada\r\n @param position posicion logica de la rueda\r\n
+comment2.target=java.lang.String getType()
+comment2.text=\r\n retorna "rebel"\r\n
+comment3.target=void Lock()
+comment3.text=\r\n @throws SlotMachineException siempre que la rueda rebelde no deja bloquear\r\n
+comment4.target=void checkSwappable()
+comment4.text=\r\nthrows SlotMachineException siempre que la rueba rebekde no se deja bloquear \r\n
+comment5.target=void checkDeteable()
+comment5.text=\r\n @throws SlotMachineException siempre que la rueda rebelde no se deja eliminar\r\n
+numComments=6

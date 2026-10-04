@@ -7,7 +7,7 @@ import java.util.Random;
  * @author Laura Juliana Parra Velandia
  * @version (a version number or a date)
  */
-public class Wheel
+public abstract class Wheel
 {
     private int position;
     private Rectangle frame;
@@ -21,13 +21,16 @@ public class Wheel
     private Random random;
     private Rectangle lockMark;
     private Rectangle activeMark;
+    private Rectangle typeMark; // indidca el tipo de rueda
+    private Wheel left; // rueda bloquedada a la izquierda
     private int lockX, lockY; //posiciom de marcador de bloqueado
-    private int activeX, activeY; //posicion del marcador de turno
+    private int activeX, activeY;
+    private int typeX, typeY;//posicion del marcador de turno
     /**
      * CONSTRUCTOR
      * Crea una rueda vacia en la posicion dada. for objects of class Wheel
      */
-    public Wheel(int position)
+    public Wheel(int position, String badgeColor)
     {
         this.position = position;
         frame = new Rectangle();
@@ -36,6 +39,7 @@ public class Wheel
         currentIndex = -1; 
         winning = false;
         visible = false;
+        left = null;
         frameX = 70; frameY = 15;   
         symX = 20; symY = 15;       
         random = new Random();
@@ -53,8 +57,17 @@ public class Wheel
         activeX = 70;
         activeY = 15;
         updatePosition();
+        //cuadro que indica el tipo de rueda
+        typeMark = new Rectangle();
+        typeMark.changeSize(10, 10);
+        typeMark.changeColor(badgeColor);
+        typeX = 70;
+        typeY = 15;
     }
-    
+    /**
+     * retorna el nombre del tipo de rueda. si es normal, lefty, rebel, o lazy
+     */
+    public abstract String getType();
     /**
      * Cambia la posicion logica de la rueda, usado cuando se agregan o
      * eliminan ruedas en la maquina y hay que renumerar las demas.
@@ -65,14 +78,26 @@ public class Wheel
           this.position =  position;
           updatePosition();
     }
-    
+    //ciclo4
     /**
      * Consulta la posicion actual de la rueda.
      */
     public int getPosition(){
         return position;
     }
-    
+    /**
+     * la maquina dice a la rueda cual es la rueda de la izquierda
+     * se actualiza cada vez que las ruedas cambian de orden
+     */
+    public void setLeft(Wheel left){
+        this.left = left;   
+    }
+    /**
+     * retorna la rueda de la izquierda
+     */
+    protected Wheel getLeft(){
+        return left;
+    }
     /**
      * MC3
      * recibe la lista de simbolos de la maquina y la guarda como una copia.
@@ -109,7 +134,12 @@ public class Wheel
         }
         return symbols.get(currentIndex).getColor();
     }
-    
+    /**
+     * retorna true si la rueda tiene un simbolo
+     */
+    protected boolean hasSymbols(){
+        return !symbols.isEmpty();
+    }
     /**
      * Elige un simbolo al azar del catalogo de esta rueda.
      */
@@ -120,7 +150,20 @@ public class Wheel
             updateColor();
         }
     }
-    
+    /**
+     * copia el estado de una rueda a otra
+     * si la otra rueda no muestra nada esta tampoco muestra nada
+     * @param other es la rueda que copia el estado de otra
+     */
+    protected void copyStateOf(Wheel other){
+        String color = other.getCurrentSymbol();
+        if (color == null){
+            currentIndex = -1;
+            updateColor();
+        } else {
+            placeSymbol(color);
+        }
+    }
     /**
      * busca el simbolo en la lista, si no encuentra da -1 y el metodo da false
      * si lo encuentra mueve el currentIndex a esa posicio para que sea visible el simbolo
@@ -161,6 +204,7 @@ public class Wheel
     public void makeVisible(){
         visible = true;
         frame.makeVisible();
+        typeMark.makeVisible();
         if(getCurrentSymbol() != null){
             symbols.get(currentIndex).makeVisible();
         }
@@ -173,6 +217,7 @@ public class Wheel
     public void makeInvisible(){
         visible = false;
         frame.makeInvisible();
+        typeMark.makeVisible();
         for(int i = 0; i < symbols.size(); i++){
             symbols.get(i).makeInvisible();
         }
@@ -187,6 +232,7 @@ public class Wheel
      */
     public void bringToFront(){
         frame.moveHorizontal(0);
+        typeMark.moveHorizontal(0);
         if(getCurrentSymbol() != null){
             symbols.get(currentIndex).bringToFront();
         }
@@ -242,9 +288,19 @@ public class Wheel
         activeMark.moveVertical(targetActiveY - activeY);
         activeX = targetActiveX;
         activeY = targetActiveY;
+        
+        int targetTypeX = targetFrameX + 29;
+        int targetTypeY = targetFrameY - 14;
+        typeMark.moveHorizontal(targetTypeX - typeX);
+        typeMark.moveVertical(targetTypeY - typeY);
+        typeX = targetTypeX;
+        typeY = targetTypeY;
     }
-    
-    public void lock(){
+    /**
+     * bloquea la rueda
+     * @throw SlotMachineException si este tipo de rueda no se deja bloquear
+     */
+    public void lock() throws SlotMachineException{
         locked = true;
         updateLockMark();
     }
@@ -252,6 +308,19 @@ public class Wheel
     public void unlock(){
         locked = false;
         updateLockMark();
+    }
+    /**
+     * revisa si la rueda se puede intercambiar de lugar con otra
+     * @throws SlotMachineException si esta rueda no se deja intercambiar
+     */
+    public void checkSwappable() throws SlotMachineException{   
+    }
+    
+    /**
+     * revisa si la rueda se puede eliminar de la maquina
+     * @throws SlotMachineExceptions si esta rueda no se deja eliminar
+     */
+    public void checkDeletable() throws SlotMachineException{   
     }
     /**
      * actualiza la posicion del bloqueo de una rueda
@@ -273,4 +342,5 @@ public class Wheel
             activeMark.makeInvisible();
         }
     }
+    
 }

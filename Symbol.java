@@ -12,9 +12,12 @@ public abstract class Symbol
     /**
      * Crea un simbolo del color dado.
      * @param color color del simbolo
+     * @throws IllegalArgumentException si el color es nulo
      */
-    public Symbol(String color)
-    {
+    public Symbol(String color){
+        if(color == null){
+            throw new IllegalArgumentException("el color no puede ser nulo");
+        }
         this.color = color;
     }
 
