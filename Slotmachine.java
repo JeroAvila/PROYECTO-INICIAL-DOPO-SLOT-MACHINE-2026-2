@@ -625,7 +625,7 @@ public class Slotmachine
         ok = true;
     }
     /**
-     * fabrica una rueda de un tipo dado
+     * crea una rueda de un tipo dado
      * @param type es el tipo del simbolo
      * @param color es el color del simbolo
      * retorna el simbolo creado
@@ -636,15 +636,18 @@ public class Slotmachine
             throw new SlotMachineException("el tipo de simbolo no puyede ser nulo");
         }
         if(type.equals("normal")){
-            return new NormalWheel(pos);
-        } else if(type.equals("lefty")){
-            return new LeftyWheel(pos);
-        } else if(type.equeals("rebel")){
-            return new RebelWheel(pos);
-        } else if(type.equals("lucky")){
-            return new LazyWheel(pos);{
-        } return new LuckyWheel(pos);
+            return new NormalSymbol(color);
+        } else if(type.equals("ephemeral")){
+            return new EphemeralSymbol(color);
+        } else if (type.equals("shy")){
+            return new ShySymbol(color);
         }
-        throw new SlotMachineException("El tipo de rueda '" + type + "' no existe.");
+        throw new SlotMachineException("El tipo de simbolo '" + type + "' no existe.");
     }
+    /**
+     * crea una rueda de un tipo dado
+     * @param type rueda normal, lefty, rebel, lazy
+     * @param pos posicion de la rueda
+     * @throws SlotMachineException si el tipo es null 
+     */
 }

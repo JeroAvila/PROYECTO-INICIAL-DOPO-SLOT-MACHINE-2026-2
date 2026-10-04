@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sat Oct 03 22:32:23 COT 2026
+#Sat Oct 03 22:50:52 COT 2026
 comment0.target=Slotmachine
 comment0.text=\r\n Simula una maquina tragamonedas \r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n @version 2.0\r\n
 comment1.target=Slotmachine()
@@ -75,7 +75,7 @@ comment34.target=void unlock(int)
 comment34.text=\r\n Desbloquea una rueda espec\u00EDfica.\r\n @param wheel posici\u00F3n de la rueda a desbloquear\r\n
 comment35.params=type color
 comment35.target=Symbol createSymbol(java.lang.String, java.lang.String)
-comment35.text=\r\n fabrica una rueda de un tipo dado\r\n @param type es el tipo del simbolo\r\n @param color es el color del simbolo\r\n retorna el simbolo creado\r\n @throws SlotMachineException es si el tipo es nulo o no existe\r\n
+comment35.text=\r\n crea una rueda de un tipo dado\r\n @param type es el tipo del simbolo\r\n @param color es el color del simbolo\r\n retorna el simbolo creado\r\n @throws SlotMachineException es si el tipo es nulo o no existe\r\n
 comment4.params=n
 comment4.target=void addWheels(int)
 comment5.params=pos
