@@ -92,6 +92,7 @@ dependency8.type=UsesDependency
 dependency9.from=SlotMachineContestTest
 dependency9.to=SlotMachineContest
 dependency9.type=UsesDependency
+<<<<<<< Updated upstream
 editor.fx.0.height=976
 editor.fx.0.width=865
 editor.fx.0.x=1060
@@ -108,6 +109,24 @@ package.frame.height=923
 package.frame.width=879
 package.numDependencies=31
 package.numTargets=20
+=======
+editor.fx.0.height=739
+editor.fx.0.width=816
+editor.fx.0.x=86
+editor.fx.0.y=174
+objectbench.height=95
+objectbench.width=534
+package.divider.horizontal=0.5971302428256071
+package.divider.vertical=0.8308457711442786
+package.editor.height=494
+package.editor.width=773
+package.editor.x=27
+package.editor.y=85
+package.frame.height=703
+package.frame.width=942
+package.numDependencies=14
+package.numTargets=10
+>>>>>>> Stashed changes
 package.showExtends=true
 package.showUses=true
 project.charset=UTF-8
@@ -238,10 +257,17 @@ target6.y=330
 target7.height=70
 target7.name=Rectangle
 target7.showInterface=false
+<<<<<<< Updated upstream
 target7.type=ClassTarget
 target7.width=120
 target7.x=250
 target7.y=20
+=======
+target7.type=UnitTestTargetJunit5
+target7.width=130
+target7.x=630
+target7.y=370
+>>>>>>> Stashed changes
 target8.height=70
 target8.name=Triangle
 target8.showInterface=false
