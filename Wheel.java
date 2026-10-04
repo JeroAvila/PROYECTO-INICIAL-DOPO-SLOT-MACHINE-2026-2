@@ -26,6 +26,7 @@ public abstract class Wheel
     private int lockX, lockY; //posiciom de marcador de bloqueado
     private int activeX, activeY;
     private int typeX, typeY;//posicion del marcador de turno
+    private int group; // ruedas de crazy, se comportan igual
     /**
      * CONSTRUCTOR
      * Crea una rueda vacia en la posicion dada. for objects of class Wheel
@@ -40,6 +41,7 @@ public abstract class Wheel
         winning = false;
         visible = false;
         left = null;
+        group = 0;
         frameX = 70; frameY = 15;   
         symX = 20; symY = 15;       
         random = new Random();
@@ -97,6 +99,26 @@ public abstract class Wheel
      */
     protected Wheel getLeft(){
         return left;
+    }
+    /**
+     * cuantas ruedas del mismo tipo trae esta rueda al agregarse a la slomachine.
+     * @return la cantidad de ruedas que acompanian
+     */
+    public int getCompanions(){
+        return 0;
+    }
+    /**
+     * la maquina asigna el grupo a las ruedas que se agregan juntas
+     * @param group es el numero del grupo
+     */
+    public void setGroup(int group){
+        this.group = group;
+    }
+    /**
+     * retorna el numero de la rueda
+     */
+    public int getGroup(){
+        return group;
     }
     /**
      * MC3

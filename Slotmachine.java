@@ -36,7 +36,7 @@ public class Slotmachine
     private boolean visible;
     private Rectangle background;
     private Random random;
-
+    private int nextGroup;
     /**
      * CONSTRUCTOR
      * Crear una maquina tragamonedas sin ruedas
@@ -44,6 +44,7 @@ public class Slotmachine
     public Slotmachine()
     {
         wheels = new ArrayList <>();
+        nextGroup = 1;
         symbols = new ArrayList <>();
         ok = true;
         visible = false;
@@ -96,14 +97,30 @@ public class Slotmachine
         if(pos > wheels.size() + 1){
             pos = wheels.size() + 1;
         }
-        Wheel newWheel;
+        ArrayList<Wheel> created;
         try{
-        newWheel = createWheel(type, pos);
+        created = createWheels(type, pos);
         } catch(SlotMachineException e){
             fail(e.getMessage());
             return;
         }
-        wheels.add(pos -1, newWheel);
+        int index = pos -1;
+        while(index > 0 && index < wheels.size() && sameGroup(wheels.get(index - 1), 
+            wheels.get(index))){
+                index++;
+        }
+        for (int i = 0; i < created.size(); i++){
+            wheels.add(index + i, created.get(i));
+        }
+        renumber();
+        updateWheelSymbols();
+        updateBackground();
+        if(visible){
+            for(int i = 0; i < created.size(); i++){
+                created.get(i).makeVisible();
+            }        
+        }
+        ok = true;
     }
     public void addWheels(int n){
         if(n < 1){
