@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sun Oct 04 02:18:18 COT 2026
+#Sun Oct 04 15:54:59 COT 2026
 comment0.target=CrazyWheel
 comment0.text=\r\n Rueda loca. cuando se agrega una rueda a la maquina \r\n mete 3 ruedas mas y todos los cambios que se hagan a esta rueda tambien afecta\r\n a las otras 3 creadas\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n \r\n
 comment1.params=position
@@ -8,5 +8,5 @@ comment1.text=\r\n crea una rueda loca en la posicion\r\n @param position lo que
 comment2.target=java.lang.String getType()
 comment2.text=\r\n retorna "crazy"\r\n
 comment3.target=int getCompanions()
-comment3.text=\r\n escribe sobre wheel.get, y rueda 3 veces mas.\r\n retorna 3\r\n
+comment3.text=\r\n Retorna 3 que son las ruedas que llegan junto con esta n+3\r\n \r\n
 numComments=4

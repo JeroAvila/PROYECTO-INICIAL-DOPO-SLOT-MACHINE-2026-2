@@ -1,7 +1,7 @@
 #BlueJ class context
-#Sat Oct 03 16:57:05 COT 2026
+#Sun Oct 04 15:53:35 COT 2026
 comment0.target=SlotMachineException
-comment0.text=\r\n excepciones de SlotMachineException\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n
+comment0.text=\r\n excepciones de SlotMachineException\r\n se lanza cuando se pide algo que no puede hacer la maquina\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n
 comment1.params=message
 comment1.target=SlotMachineException(java.lang.String)
 comment1.text=\r\n crea la exception\r\n @param message explicacion de la excepcion\r\n

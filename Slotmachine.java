@@ -159,14 +159,13 @@ public class Slotmachine
         int start = blockStart(pos -1);
         int end = blockEnd(pos -1);
         for(int i = start; i < end; i++){
-            if(!blocked(wheels.get(i), "no se puede eliminar porque la rueda" + pos
-                + "esta bloqueada")){
+            if(blocked(wheels.get(i), "no se puede eliminar porque la rueda" + pos                + "esta bloqueada")){
                 return;
             }
         }
         try{
             for(int i = start; i < end; i++){
-                wheels.get(1).checkDeletable();
+                wheels.get(i).checkDeletable();
             }
         } catch(SlotMachineException e){
             fail(e.getMessage());
@@ -284,7 +283,6 @@ public class Slotmachine
             symbol = createSymbol(type, color);
         } catch(SlotMachineException e){
             fail(e.getMessage());
-            ok = true;
             return;
         }
         symbols.add(pos -1, symbol);

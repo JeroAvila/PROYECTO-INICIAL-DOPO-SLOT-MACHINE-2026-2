@@ -23,8 +23,8 @@ public class CrazyWheel extends Wheel{
         return "crazy";
     }
     /**
-     * escribe sobre wheel.get, y rueda 3 veces mas.
-     * retorna 3
+     * Retorna 3 que son las ruedas que llegan junto con esta n+3
+     * 
      */
     public int getCompanions(){
         return COMPANIONS;

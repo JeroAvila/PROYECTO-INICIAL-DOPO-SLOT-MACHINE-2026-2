@@ -21,14 +21,16 @@ public class LeftyWheel extends Wheel{
         return "lefty";
     }
     /**
-     * sobreescribe Wheel.spin() en lugar de eligir al azar
-     * copia a la vecina de la izquierda
+     * gira la rueda
+     * si no tiene vecina a la izq gira al azar como la normal
+     * si tiene vecina, copia el simvolo que muestra, si esta
+     * bloqueada o sin algun simbolo no hace nada
+     * 
      */
     public void spin(){
         Wheel neighbor = getLeft();
         if(neighbor == null){
             super.spin();
-        
         } else if(!isLocked() && hasSymbols()){
             copyStateOf(neighbor);
         }

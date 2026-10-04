@@ -4,8 +4,7 @@
  * @author Thomas Jeronimo Avila Castillo
  * @version 1.0
  */
-public class NormalSymbol extends Symbol
-{
+public class NormalSymbol extends Symbol{
     private Triangle shape;
     private int shapeX; // vertice superior del triangulo
     private int shapeY;

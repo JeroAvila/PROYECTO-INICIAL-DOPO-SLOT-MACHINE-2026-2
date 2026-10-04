@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sun Oct 04 02:18:18 COT 2026
+#Sun Oct 04 15:54:59 COT 2026
 comment0.target=LeftyWheel
 comment0.text=\r\n Rueda Lefty, rueda zurda. \r\n si hay una rueda a la izquierda, gira su estado mostrando el mismo que el\r\n de la izquierda, gira como una rueda normal\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n
 comment1.params=position
@@ -8,5 +8,5 @@ comment1.text=\r\n CONSTRUCTOR\r\n crea una rueda lefty en la posicon dada\r\n @
 comment2.target=java.lang.String getType()
 comment2.text=\r\n retorna "lefty"\r\n
 comment3.target=void spin()
-comment3.text=\r\n sobreescribe Wheel.spin() en lugar de eligir al azar\r\n copia a la vecina de la izquierda\r\n
+comment3.text=\r\n gira la rueda\r\n si no tiene vecina a la izq gira al azar como la normal\r\n si tiene vecina, copia el simvolo que muestra, si esta\r\n bloqueada o sin algun simbolo no hace nada\r\n \r\n
 numComments=4

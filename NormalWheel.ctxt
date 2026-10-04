@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sun Oct 04 02:18:18 COT 2026
+#Sun Oct 04 15:54:59 COT 2026
 comment0.target=NormalWheel
 comment0.text=\r\n rueda normal, gira, se bloquea, se intercambia y se puede eliminar\r\n @author laura Juliana Parra Velandia\r\n @autor Thomas Jeronimo Avila\r\n
 comment1.params=position

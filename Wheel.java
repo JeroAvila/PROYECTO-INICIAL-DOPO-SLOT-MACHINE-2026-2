@@ -9,24 +9,34 @@ import java.util.Random;
  */
 public abstract class Wheel
 {
+    private static final int SHAPE_X = 70; //Comienza rectangle
+    private static final int SHAPE_Y = 15;
+    private static final int FIRST_X = 20; // marco de la primera rueda
+    private static final int TOP_Y = 40;
+    private static final int SPACING = 70; // es la distancia de ruedass
+    private static final int SYMBOL_DX = 5; // se desplaza segun el marco
+    private static final int LOCK_DX = 15;
+    private static final int ACTIVE_DX = 16;
+    private static final int ACTIVE_DY = 34;
+    private static final int TYPE_DX = 29;
+    private static final int MARK_DY = -14;
+    private static final int MARK_SIZE = 10;
+    private static final int ACTIVE_SIZE = 8;
+    
     private int position;
     private Rectangle frame;
-    private ArrayList<Symbol> symbols; 
-    private int currentIndex;  
-    private boolean winning;  
+    private Rectangle typeMark;
+    private Rectangle activeMark;
+    private Rectangle lockMark;
+    private int frameX;
+    private int frameY;
+    private ArrayList<Symbol> symbols;
+    private int currentIndex;
     private boolean visible;
     private boolean locked;
-    private int frameX, frameY; // posicion actual del frame en pantalla
-    private int symX, symY;     // posicion actual del espacio del simbolo
+    private Wheel left;
+    private int group;
     private Random random;
-    private Rectangle lockMark;
-    private Rectangle activeMark;
-    private Rectangle typeMark; // indidca el tipo de rueda
-    private Wheel left; // rueda bloquedada a la izquierda
-    private int lockX, lockY; //posiciom de marcador de bloqueado
-    private int activeX, activeY;
-    private int typeX, typeY;//posicion del marcador de turno
-    private int group; // ruedas de crazy, se comportan igual
     /**
      * CONSTRUCTOR
      * Crea una rueda vacia en la posicion dada. for objects of class Wheel
@@ -34,36 +44,19 @@ public abstract class Wheel
     public Wheel(int position, String badgeColor)
     {
         this.position = position;
-        frame = new Rectangle();
-        frame.changeColor("gray");
-        symbols = new ArrayList<>();
-        currentIndex = -1; 
-        winning = false;
-        visible = false;
+        symbols = new ArrayList<Symbol>();
+        currentIndex = -1;
+        locked = false;
         left = null;
         group = 0;
-        frameX = 70; frameY = 15;   
-        symX = 20; symY = 15;       
         random = new Random();
-        //cuadro que indica esta bloqueado
-        lockMark = new Rectangle();
-        lockMark.changeSize(10, 10);
-        lockMark.changeColor("red");
-        lockX = 70;
-        lockY = 15;
-        
-        // cuadro que indica en que posicion se esta haciendo el movimiento
-        activeMark = new Rectangle();
-        activeMark.changeSize(8, 8);
-        activeMark.changeColor("green");
-        activeX = 70;
-        activeY = 15;
-        //cuadro que indica el tipo de rueda
-        typeMark = new Rectangle();
-        typeMark.changeSize(10, 10);
-        typeMark.changeColor(badgeColor);
-        typeX = 70;
-        typeY = 15;
+        frame = new Rectangle();
+        frame.changeColor("gray");
+        frameX = SHAPE_X;
+        frameY = SHAPE_Y;
+        typeMark = createMark(MARK_SIZE, badgeColor, TYPE_DX, MARK_DY);
+        lockMark = createMark(MARK_SIZE, "red", LOCK_DX, MARK_DY);
+        activeMark = createMark(ACTIVE_SIZE, "green", ACTIVE_DX, ACTIVE_DY);
         updatePosition();
     }
     /**
@@ -81,12 +74,6 @@ public abstract class Wheel
           updatePosition();
     }
     //ciclo4
-    /**
-     * Consulta la posicion actual de la rueda.
-     */
-    public int getPosition(){
-        return position;
-    }
     /**
      * la maquina dice a la rueda cual es la rueda de la izquierda
      * se actualiza cada vez que las ruedas cambian de orden
@@ -128,22 +115,15 @@ public abstract class Wheel
      */
     public void setSymbols(ArrayList<Symbol> catalog) {
         String previousColor = getCurrentSymbol();
-        for(int i = 0; i < symbols.size(); i++){
-            symbols.get(i).makeInvisible();
-        }
-        symbols = new ArrayList<>();
+        hideSymbols();
+        symbols = new ArrayList<Symbol>();
         for(int i = 0; i < catalog.size(); i++){
             Symbol copy = catalog.get(i).copy();
-            copy.setPosition(symX, symY);
+            copy.setPosition(frameX + SYMBOL_DX, frameY);
             symbols.add(copy);
         }
-        currentIndex = -1;
-        for(int i = 0; i < symbols.size(); i++){
-            if(symbols.get(i).getColor().equals(previousColor)){
-                currentIndex = i;
-            }
-        }
-        updateColor();
+        currentIndex = indexOf(previousColor);
+        showCurrentSymbol();
     }
     
     /**
@@ -166,10 +146,8 @@ public abstract class Wheel
      * Elige un simbolo al azar del catalogo de esta rueda.
      */
     public void spin() {
-        if(!locked && !symbols.isEmpty()){
-            currentIndex = random.nextInt(symbols.size());
-            symbols.get(currentIndex).select();
-            updateColor();
+        if(!locked && hasSymbols()){
+            select(random.nextInt(symbols.size()));
         }
     }
     /**
@@ -181,7 +159,7 @@ public abstract class Wheel
         String color = other.getCurrentSymbol();
         if (color == null){
             currentIndex = -1;
-            updateColor();
+            showCurrentSymbol();
         } else {
             placeSymbol(color);
         }
@@ -190,19 +168,12 @@ public abstract class Wheel
      * busca el simbolo en la lista, si no encuentra da -1 y el metodo da false
      * si lo encuentra mueve el currentIndex a esa posicio para que sea visible el simbolo
      */
-    public boolean placeSymbol(String symbol){
-        int index = -1;
-        for(int i = 0; i < symbols.size(); i++){
-            if(symbols.get(i).getColor().equals(symbol)){
-                index = i;
-            }
-        }
-        if (index == -1){
+    public boolean placeSymbol(String color){
+        int index = indexOf(color);
+        if(index == -1){
             return false;
         }
-        currentIndex = index;
-        symbols.get(currentIndex).select();
-        updateColor();
+        select(index);
         return true;
     }
     
@@ -213,8 +184,11 @@ public abstract class Wheel
      * @param winning true si la maquina esta en estado ganador
      */
     public void setWinning(boolean winning){
-        this.winning = winning;
-        frame.changeColor(winning ? "yellow" : "gray");
+        if(winning){
+            frame.changeColor("yellow");
+        } else {
+            frame.changeColor("gray");
+        }
         if(visible && getCurrentSymbol() != null){
             symbols.get(currentIndex).makeVisible(); 
         }
@@ -239,10 +213,8 @@ public abstract class Wheel
     public void makeInvisible(){
         visible = false;
         frame.makeInvisible();
-        typeMark.makeVisible();
-        for(int i = 0; i < symbols.size(); i++){
-            symbols.get(i).makeInvisible();
-        }
+        typeMark.makeInvisible();
+        hideSymbols();
         lockMark.makeInvisible();
         activeMark.makeInvisible();
     }
@@ -261,64 +233,7 @@ public abstract class Wheel
         lockMark.moveHorizontal(0);
         activeMark.moveHorizontal(0);
     }
-    
-    /**
-     * actualiza el circulo del simbolo para que coincida con el color
-     * actualmente visible. Si no hay simbolo asignado (getCurrentSymbol
-     * da null), el circulo se oculta.
-     */
-    private void updateColor(){
-        for(int i = 0; i < symbols.size(); i++){
-            symbols.get(i).makeInvisible();
-        }
-        if(getCurrentSymbol() != null && visible){
-            symbols.get(currentIndex).makeVisible();
-        }
-    }
-    
-    /**
-     * Mueve el frame y el circulo a la posicion en pantalla que le
-     * corresponde segun la posicion logica de la rueda, para que cada
-     * rueda quede separada de las demas en el Canvas.
-     */
-    private void updatePosition(){
-        int targetFrameX = 20 + (position - 1) * 70;
-        int targetFrameY = 40;
-        frame.moveHorizontal(targetFrameX - frameX);
-        frame.moveVertical(targetFrameY - frameY);
-        frameX = targetFrameX;
-        frameY = targetFrameY;
-        
-        int targetSymX = targetFrameX + 5; 
-        int targetSymY = targetFrameY;
-        symX = targetSymX;
-        symY = targetSymY;
-        for(int i = 0; i < symbols.size(); i++){
-            symbols.get(i).setPosition(symX, symY);
-        }
-        
-        int targetLockX = targetFrameX + 15;
-        int targetLockY = targetFrameY - 14;
-        lockMark.moveHorizontal(targetLockX - lockX );
-        lockMark.moveVertical(targetLockY - lockY);
-        lockX = targetLockX;
-        lockY = targetLockY;
-        
-        int targetActiveX = targetFrameX + 16;
-        int targetActiveY = targetFrameY + 34;
-        activeMark.moveHorizontal(targetActiveX - activeX);
-        activeMark.moveVertical(targetActiveY - activeY);
-        activeX = targetActiveX;
-        activeY = targetActiveY;
-        
-        int targetTypeX = targetFrameX + 29;
-        int targetTypeY = targetFrameY - 14;
-        typeMark.moveHorizontal(targetTypeX - typeX);
-        typeMark.moveVertical(targetTypeY - typeY);
-        typeX = targetTypeX;
-        typeY = targetTypeY;
-    }
-    /**
+     /**
      * bloquea la rueda
      * @throw SlotMachineException si este tipo de rueda no se deja bloquear
      */
@@ -326,10 +241,18 @@ public abstract class Wheel
         locked = true;
         updateLockMark();
     }
-    
+    /**
+     * desbloquea la rueda
+     */
     public void unlock(){
         locked = false;
         updateLockMark();
+    }
+    /**
+     * retorna true si la rueda esta bloqueada
+     */
+    public boolean isLocked(){
+        return locked;
     }
     /**
      * revisa si la rueda se puede intercambiar de lugar con otra
@@ -345,24 +268,107 @@ public abstract class Wheel
     public void checkDeletable() throws SlotMachineException{   
     }
     /**
-     * actualiza la posicion del bloqueo de una rueda
+     * muestra, oculata la marca del indice que indica si la rueda esta girando
+     * @param active es que se esta mostarndo
      */
-    private void updateLockMark(){
-        if (locked && visible){
-            lockMark.makeVisible();
-        } else {
-            lockMark.makeInvisible();
-        }
-    }
-    public boolean isLocked(){
-        return locked;
-    }
     public void markActive(boolean active){
-        if (active && visible){
+        if(active && visible){
             activeMark.makeVisible();
         } else {
             activeMark.makeInvisible();
         }
     }
-    
+    /**
+     * crea las marcas de la rueda y se ubica en el marco
+     * @param size es el lado del cuadrado
+     * @param color es el color de la marca
+     * @param dx es la distancia horizontal al marco
+     * @param dy es la distacia vertical al marco
+     * retorna la marca que se creo
+     */
+    private Rectangle createMark(int size, String color, int dx, int dy){
+        Rectangle mark = new Rectangle();
+        mark.changeSize(size, size);
+        mark.changeColor(color);
+        mark.moveHorizontal(dx);
+        mark.moveVertical(dy);
+        return mark;
+    }
+    /**
+     * busca entre los simbolos de la rueda que color tiene la de al lado
+     * @param color es el color que se esta buscando
+     * retorna el indice  o -1 si la rueda no tiene el simbolo
+     */
+    private int indexOf(String color){
+        for(int i = 0; i < symbols.size(); i++){
+            if(symbols.get(i).getColor().equals(color)){
+                return i;
+            }
+        }
+        return -1;
+    }
+    /**
+     * es para que la rueda muestre el simbolo del indice
+     * y avisa al simbolo que fue seleccionado.
+     * @param index es el indice del simbolo
+     */   
+    private void select(int index){
+        currentIndex = index;
+        symbols.get(currentIndex).select();
+        showCurrentSymbol();
+    }
+    /**
+     * borra la pantalla todos los simbolos que estan en la rueda
+     */
+    private void hideSymbols(){
+        for(int i = 0; i < symbols.size(); i++){
+            symbols.get(i).makeInvisible();
+        }
+    }
+    /**
+     * solo deja dibujado unicamente el simbolo actual
+     */
+    private void showCurrentSymbol(){
+        hideSymbols();
+        if(visible && currentIndex != -1){
+            symbols.get(currentIndex).makeVisible();
+        }
+    }
+    /**
+     * muece el marco, las marcas, los simbolos
+     * al lugar de la pantalla que le toca segun las ruedas
+     */
+    private void updatePosition(){
+        int dx = FIRST_X + (position -1) * SPACING - frameX;
+        int dy = TOP_Y - frameY;
+        move(frame, dx, dy);
+        move(typeMark, dx, dy);
+        move(lockMark, dx, dy);
+        move(activeMark, dx, dy);
+        frameX = frameX + dx;
+        frameY = frameY + dy;
+        for(int i = 0; i < symbols.size(); i++){
+            symbols.get(i).setPosition(frameX + SYMBOL_DX, frameY);
+        }
+    }
+    /**
+     * mueve el rectangulo la distancia que se de
+     * @param shape es el rectangulo a mover
+     * @param dc es la distancia horizontal
+     * @param dy es la distancia vertical
+     */
+    private void move(Rectangle shape, int dx, int dy){
+        shape.moveHorizontal(dx);
+        shape.moveVertical(dy);
+    }
+    /**
+     * esto muestra la marca roja solo si la rueda esta bloqueada y es visible
+     */
+    private void updateLockMark(){
+        if(locked && visible){
+            lockMark.makeVisible();
+        } else {
+            lockMark.makeInvisible();
+        }
+    }
 }

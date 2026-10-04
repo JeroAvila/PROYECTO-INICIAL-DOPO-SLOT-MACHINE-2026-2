@@ -10,7 +10,7 @@ public class NormalWheel extends Wheel{
      * @param position posicion logica de la rueda
      */
     public NormalWheel(int position){
-        super(position, "write");
+        super(position, "white");
     }
     /**
      * retorna 
