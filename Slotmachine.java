@@ -82,7 +82,19 @@ public class Slotmachine
         }
         ok = true;
     }
-
+    /**
+     * agrega una rueda normal
+     * @param pos posicion donde se va a insertar la rueda
+     */
+    public void addWheel(int pos){
+        addWheel(pos, "normal");
+    }
+    /**
+     * agregar una rueda del tipo dado en la posicion dada
+     */
+    public void addWheel(String type, int pos){
+        addWheel(pos, type);
+    }
     /**
      * Agregar una rueda nueva en la posicion dada, desplazando las
      * demas ruedas. Si la posicion es menor a 1 se usa 1, y si es mayor
@@ -144,22 +156,84 @@ public class Slotmachine
         }
         pos = clamp(pos);
         Wheel targetWheel = wheels.get(pos-1);
-        if(blocked(targetWheel, "No se puede elimanar puesto que la rueda" + pos + "esta bloqueada, desbloqueala")){
-            return;
+        int start = blockStart(pos -1);
+        int end = blockEnd(pos -1);
+        for(int i = start; i < end; i++){
+            if(!blocked(wheels.get(i), "no se puede eliminar porque la rueda" + pos
+                + "esta bloqueada")){
+                return;
+            }
         }
-        try {
-            targetWheel.checkDeletable();
+        try{
+            for(int i = start; i < end; i++){
+                wheels.get(1).checkDeletable();
+            }
         } catch(SlotMachineException e){
             fail(e.getMessage());
             return;
         }
-        wheels.remove(pos-1);
+        for (int i = end -1; i >= start; i--){
+            wheels.get(i).makeInvisible();
+            wheels.remove(i);
+        }
         renumber();
         updateJackpotVisual();
         updateBackground();
         ok = true;
     }
-    
+    /**
+     * crea la rueda pedida, si es la rueda crazy tambien crea las otras 3
+     * @param type tipo de rueda
+     * @param pos posicion de la rueda
+     * retorna la rueda y si hace falta las otras 3 de crazy
+     * @throws SlotMachineException pasa si el tipo es nulo o no exisste
+     */
+    private ArrayList<Wheel> createWheels(String type, int pos) throws SlotMachineException{
+        ArrayList<Wheel> created = new ArrayList<>();
+        Wheel first = createWheel(type, pos);
+        created.add(first);
+        int extra = first.getCompanions();
+        if(extra > 0){
+            int group = nextGroup;
+            nextGroup++;
+            first.setGroup(group);
+            for(int i = 1; i <= extra; i++){
+                    Wheel companion = createWheel(type, pos + i);
+                    companion.setGroup(group);
+                    created.add(companion);
+            }
+        }
+        return created;
+    }
+    /**
+     * retorna true si las dos ruedas pertenecen al mismo grupo
+     * @param a una rueda
+     * @param b una rueda
+     */
+    private boolean sameGroup(Wheel a, Wheel b){
+        return a.getGroup() != 0 && a.getGroup() == b.getGroup();
+    }
+    /**
+     * retorna el indice de la primera rueda del grupo
+     * @param index indice de uuna rueda
+     */
+    private int blockStart(int index){
+        int start = index;
+        while(start >0 && sameGroup(wheels.get(start -1), wheels.get(index))){
+            start--;
+        }
+        return start;
+    }
+    /**
+     * retorna el indice siguiente a la ultima rueda del grupo
+     */
+    private int blockEnd(int index){
+        int end = index + 1;
+        while(end < wheels.size() && sameGroup(wheels.get(end), wheels.get(index))){
+            end++;
+        }
+        return end;
+    }
     /**
      * Indica si la ultima operacion realizada sobre la maquina se completo con exito.
      * @return true si la ultima operacion fue exitosa, false en caso
@@ -209,13 +283,24 @@ public class Slotmachine
         try{
             symbol = createSymbol(type, color);
         } catch(SlotMachineException e){
-        
-        } catch(SlotMachineException e){
             fail(e.getMessage());
             ok = true;
+            return;
         }
+        symbols.add(pos -1, symbol);
+        updateWheelSymbols();
+        ok = true;
     }
+    /**
+     * agrega un simbolo dado
+     * @param type tipo de simbolo
+     * @param pos posicion donde se inserta el simbolo
+     * @param color es el color del simbolo
+     */
+    public void addSymbol(String type, int pos, String color){
+        addSymbol(pos, color, type);
     
+    }
     /**
      * Marca la ultima operacion como fallida y, si la maquina esta
      * visible, le muestra el mensaje al usuario con un JOptionPane.
@@ -330,6 +415,7 @@ public class Slotmachine
     private void renumber(){
         for(int i = 0; i < wheels.size(); i++){
             wheels.get(i).setPosition(i+1);
+             wheels.get(i).setLeft(i == 0 ? null : wheels.get(i - 1));
         }
     }
     
@@ -404,10 +490,12 @@ public class Slotmachine
         if(blocked(targetWheel, "La rueda " + wheel + " esta bloqueada.")){
             return;
         }
-        boolean placed = targetWheel.placeSymbol(symbol);
-        if(!placed){
-            fail("El simbolo '" + symbol + "' no esta registrado en la maquina.");
-            return;
+        for (int i = blockStart(wheel - 1); i < blockEnd(wheel - 1); i++){
+            boolean placed = wheels.get(i).placeSymbol(symbol);
+            if(!placed){
+                fail("el simbolo" + symbol + "no esta registrado");
+                return;
+            }
         }
         updateJackpotVisual();
         ok = true;
@@ -428,7 +516,9 @@ public class Slotmachine
         if(blocked(targetWheel, "La rueda " + wheel + " esta bloqueada.")){
             return;
         }
-        targetWheel.spin();
+        for(int i = blockStart(wheel -1); i < blockEnd(wheel - 1); i ++){
+            wheels.get(i).spin();
+        }
         updateJackpotVisual();
         ok = true;
     }
@@ -475,7 +565,10 @@ public class Slotmachine
            fail("El numero de pasos debe ser al menos 1");
            return;
         }
-       Wheel target = wheels.get(wheel -1);
+       for(int j = blockStart(wheel - 1); j < blockEnd(wheel - 1); j++){
+            wheels.get(j).spin();
+        }
+       Wheel target = wheels.get(wheel - 1);  
        if(blocked(target, "No se puede girar si esta bloqueada la rueda")){
             return;
         }
@@ -599,19 +692,53 @@ public class Slotmachine
             fail("Posición de rueda inválida para el intercambio.");
             return;
         }
-        Wheel w1 = wheels.get(wheel1 - 1);
-        Wheel w2 = wheels.get(wheel2 - 1);
-        if (blocked(w1, "No se puede rotar puesto que la rueda " + wheel1 + " esta bloqueada, desbloqueala")) {
+        int start1 = blockStart(wheel1 -1);
+        int end1 = blockEnd(wheel1 - 1);
+        int start2 = blockStart(wheel2 - 1);
+        int end2 = blockEnd(wheel2 -1);
+        for (int i = start1; i < end1; i++){
+            if(blocked(wheels.get(i), "no se puede rotar la rueda" + wheel1 + 
+                "esta bloqueada")){
+                return;
+            }
+        }
+        for(int i = start2; i < end2; i++){
+            if(blocked(wheels.get(i), "no se puede rotar la rueda" + wheel2 + 
+                "esta bloqueada")){
+                return;
+            }
+        }
+        try{
+            for (int i = start1; i < end1; i++){
+                wheels.get(i).checkSwappable();
+            }
+            for (int i = start2; i < end2; i++){
+                wheels.get(i).checkSwappable();
+            }
+        } catch (SlotMachineException e){
+            fail(e.getMessage());
             return;
         }
-        if (blocked(w2, "No se puede rotar puesto que la rueda " + wheel2 + " esta bloqueada, desbloqueala")) {
-            return;
+        if(start1 != start2){
+            if(start1 > start2){
+                int tempStart = start1;
+                int tempEnd = end1;
+                start1 = start2;
+                end1 = end2;
+                start2 = tempStart;
+                end2 = tempEnd;
+            }
+            List<Wheel> reorder = new ArrayList<>();
+            reorder.addAll(wheels.subList(0, start1));
+            reorder.addAll(wheels.subList(start2, end2));
+            reorder.addAll(wheels.subList(end1, start2));
+            reorder.addAll(wheels.subList(start1, end1));
+            reorder.addAll(wheels.subList(end2, wheels.size()));
+            wheels = reorder;
         }
-        // Intercambiar en la lista
-        wheels.set(wheel1 - 1, w2);
-        wheels.set(wheel2 - 1, w1);
         // Actualizar posiciones visuales y lógicas
         renumber();
+        updateJackpotVisual();
         updateBackground();
         ok = true;
     }
@@ -625,7 +752,14 @@ public class Slotmachine
             return;
         }
         wheel = clamp(wheel);
-        wheels.get(wheel - 1).lock();
+        try{
+            for (int i = blockStart(wheel - 1); i < blockEnd(wheel - 1); i++){
+                wheels.get(i).lock();
+            }
+        } catch (SlotMachineException e) {
+            fail(e.getMessage());
+            return;
+        }
         ok = true;
     }
 
@@ -638,7 +772,9 @@ public class Slotmachine
             return;
         }
         wheel = clamp(wheel);
-        wheels.get(wheel - 1).unlock();
+        for (int i = blockStart(wheel - 1); i < blockEnd(wheel - 1); i++) {
+            wheels.get(i).unlock();
+        }
         ok = true;
     }
     /**
@@ -667,4 +803,30 @@ public class Slotmachine
      * @param pos posicion de la rueda
      * @throws SlotMachineException si el tipo es null 
      */
+    private Wheel createWheel(String type, int pos) throws SlotMachineException{
+        if(type == null){
+            throw new SlotMachineException("El tipo de rueda no puede ser nulo.");
+        }
+        if(type.equals("normal")){
+            return new NormalWheel(pos);
+        } else if(type.equals("lefty")){
+            return new LeftyWheel(pos);
+        } else if(type.equals("rebel")){
+            return new RebelWheel(pos);
+        } else if(type.equals("crazy")){
+            return new CrazyWheel(pos);
+        }
+        throw new SlotMachineException("El tipo de rueda '" + type + "' no existe.");
+    }
+    /**
+     * consulta el tipo de rueda de cada maquina
+     */
+    public String[] wheelTypes(){
+        ok = true;
+        String[] result = new String[wheels.size()];
+        for(int i = 0; i < wheels.size(); i++){
+            result[i] = wheels.get(i).getType();
+        }
+        return result;
+    }
 }

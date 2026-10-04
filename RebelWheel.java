@@ -12,7 +12,7 @@ public class RebelWheel extends Wheel{
      */
     public RebelWheel(int position){
             super(position, "orange");
-        }
+    }
     /**
      * retorna "rebel"
      */
@@ -34,7 +34,7 @@ public class RebelWheel extends Wheel{
     /**
      * @throws SlotMachineException siempre que la rueda rebelde no se deja eliminar
      */
-    public void checkDeteable() throws SlotMachineException{
+    public void checkDeletable() throws SlotMachineException{
         throw new SlotMachineException("la rueda rebelde no se deja eliminar");
     }
     }

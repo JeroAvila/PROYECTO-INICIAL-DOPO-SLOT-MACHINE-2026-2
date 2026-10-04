@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sat Oct 03 21:11:47 COT 2026
+#Sun Oct 04 02:18:18 COT 2026
 comment0.target=LeftyWheel
 comment0.text=\r\n Rueda Lefty, rueda zurda. \r\n si hay una rueda a la izquierda, gira su estado mostrando el mismo que el\r\n de la izquierda, gira como una rueda normal\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n
 comment1.params=position

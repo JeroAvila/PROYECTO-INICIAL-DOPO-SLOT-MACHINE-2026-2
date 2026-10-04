@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sun Oct 04 00:12:20 COT 2026
+#Sun Oct 04 02:01:44 COT 2026
 comment0.target=Wheel
 comment0.text=\r\n Es la representacion de una rueda en la maquina tragamonedas\r\n\r\n @author Thomas Jeronimo Avila Casillo\r\n @author Laura Juliana Parra Velandia\r\n @version (a version number or a date)\r\n
 comment1.params=position badgeColor

@@ -58,13 +58,13 @@ public abstract class Wheel
         activeMark.changeColor("green");
         activeX = 70;
         activeY = 15;
-        updatePosition();
         //cuadro que indica el tipo de rueda
         typeMark = new Rectangle();
         typeMark.changeSize(10, 10);
         typeMark.changeColor(badgeColor);
         typeX = 70;
         typeY = 15;
+        updatePosition();
     }
     /**
      * retorna el nombre del tipo de rueda. si es normal, lefty, rebel, o lazy
@@ -226,7 +226,7 @@ public abstract class Wheel
     public void makeVisible(){
         visible = true;
         frame.makeVisible();
-        typeMark.makeVisible();
+        typeMark.makeInvisible();
         if(getCurrentSymbol() != null){
             symbols.get(currentIndex).makeVisible();
         }

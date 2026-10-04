@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sat Oct 03 23:34:35 COT 2026
+#Sun Oct 04 02:18:18 COT 2026
 comment0.target=CrazyWheel
 comment0.text=\r\n Rueda loca. cuando se agrega una rueda a la maquina \r\n mete 3 ruedas mas y todos los cambios que se hagan a esta rueda tambien afecta\r\n a las otras 3 creadas\r\n @author Laura Juliana Parra Velandia\r\n @author Thomas Jeronimo Avila Castillo\r\n \r\n
 comment1.params=position

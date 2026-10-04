@@ -59,7 +59,7 @@ public class ShySymbol extends Symbol {
      */
     public void makeInvisible(){
         if(!hidden){
-            shape.makeVisible();
+            shape.makeInvisible();
         }
     }
     /**

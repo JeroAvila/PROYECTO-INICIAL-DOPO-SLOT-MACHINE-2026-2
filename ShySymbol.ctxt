@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sat Oct 03 16:57:05 COT 2026
+#Sun Oct 04 02:01:44 COT 2026
 comment0.target=ShySymbol
 comment0.text=\r\n shysimbol o simbolo timido que lo que hace es que es un cuadrado\r\n que alterna entre visible e invisible cuando la rueda lo selecciona\r\n @autor Laura Juliana Velandia\r\n @autor Thomas Jeronimo Avila Castillo\r\n
 comment1.params=color
